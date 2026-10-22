@@ -239,7 +239,7 @@ export function beanSvg(bean: Bean, data: SiteData): string {
   const name = fit(displayName(bean.name), W, 64, 34);
   const en = fit(bean.nameEn, W, 28, 18);
   const eyebrow = fit([s?.nameEn?.toUpperCase(), s?.name].filter(Boolean).join(' · '), W, 15, 11);
-  const origin = fit([bean.origin, bean.region && bean.region !== bean.origin ? bean.region : ''].filter(Boolean).join('・'), W, 22, 16);
+  const origin = fit([bean.origin, bean.region && bean.region !== bean.origin && bean.region !== '綜合' ? bean.region : ''].filter(Boolean).join('・'), W, 22, 16);
   const notes = fit(bean.notes.slice(0, 3).join('・'), W, 22, 16);
   const level = Math.min(5, Math.max(1, Math.round(bean.roast)));
   const bx = (i: number) => X + i * 52;
