@@ -2847,18 +2847,25 @@ button {
 .mock-head h3 {
   margin-bottom: 0;
 }
+.mock-plus-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  user-select: none;
+}
 .mock-plus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--bg);
-  font-size: 1.4rem;
+  width: 32px;
+  height: 32px;
+  border: 1.5px dashed var(--ink-2);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 1.1rem;
   line-height: 1;
   border-radius: 4px;
-  user-select: none;
 }

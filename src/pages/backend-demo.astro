@@ -33,7 +33,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
     <div class="wrap">
       <p class="eyebrow mono">How the backend works</p>
       <h1>後台怎麼用？<br />三個步驟就夠了。</h1>
-      <p class="lede">網站上的豆子、價格、圖片與消息，都由店家自己在後台修改，不必寫程式。產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。下面是示意畫面，其中的欄位可以直接試著輸入。</p>
+      <p class="lede">網站上的豆子、價格、圖片與消息，都由店家自己在後台修改，不必寫程式。產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。下面是示意畫面，其中的欄位可以直接試著輸入（示意中的「＋」只是標出位置，不能按）。</p>
     </div>
   </div>
 
@@ -95,7 +95,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
                 <li>門市資訊</li>
               </ul>
               <div class="mock-main">
-                <div class="mock-head"><h3>新增咖啡豆</h3><span class="mock-plus" aria-hidden="true">＋</span></div>
+                <div class="mock-head"><h3>新增咖啡豆</h3><span class="mock-plus-note"><span class="mock-plus" aria-hidden="true">＋</span>真實後台的新增鈕</span></div>
                 <div class="mock-tabs" role="tablist" aria-label="後台檢視">
                   <button type="button" role="tab" id="tab-edit" aria-selected="true" aria-controls="pane-edit">編輯</button>
                   <button type="button" role="tab" id="tab-prev" aria-selected="false" aria-controls="pane-prev" tabindex="-1">袋子預覽</button>
@@ -192,7 +192,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
                 <li>門市資訊</li>
               </ul>
               <div class="mock-main">
-                <div class="mock-head"><h3>新增消息</h3><span class="mock-plus" aria-hidden="true">＋</span></div>
+                <div class="mock-head"><h3>新增消息</h3><span class="mock-plus-note"><span class="mock-plus" aria-hidden="true">＋</span>真實後台的新增鈕</span></div>
                 <div class="mock-field">
                   <label for="n-title">標題</label>
                   <input id="n-title" type="text" value="本週新到貨：安提瓜火山" maxlength="30" />
@@ -294,12 +294,12 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
       <div class="sec-head reveal">
         <div>
           <p class="sec-no mono">放心使用</p>
-          <h2 class="sec-title" id="trust-t">放心自己管，發佈前先預覽。</h2>
+          <h2 class="sec-title" id="trust-t">放心自己管，草稿不會上網站。</h2>
         </div>
       </div>
       <ul class="trust">
         <li class="reveal"><h3>只有受邀的人能登入</h3><p>登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。帳號由店家邀請與管理，可以隨時移除離職同仁的存取權。</p></li>
-        <li class="reveal" style="--d: 0.08s"><h3>草稿先存、發佈前可預覽</h3><p>草稿紀錄在免費方案只保留 3 天（Growth 方案 90 天），已發佈內容的完整修改歷史免費與 Growth 都沒有，所以重要內容仍建議自己留底。後台會自動存草稿，發佈前可以先預覽。</p></li>
+        <li class="reveal" style="--d: 0.08s"><h3>草稿先存，按發佈才上線</h3><p>草稿紀錄在免費方案只保留 3 天（Growth 方案 90 天），已發佈內容的完整修改歷史免費與 Growth 都沒有，所以重要內容仍建議自己留底。後台會自動存草稿，按下「發佈」才會出現在網站上；咖啡豆的編輯頁另有袋子預覽，可以先看豆袋長什麼樣子。</p></li>
         <li class="reveal" style="--d: 0.16s"><h3>前台只讀取公開內容</h3><p>網站本身是靜態頁面；內容存在 Sanity 雲端，前台只讀取公開內容。全站使用 HTTPS。</p></li>
         <li class="reveal" style="--d: 0.24s"><h3>網站與帳號在店家名下</h3><p>本範例放在諾豪資訊的帳號下；正式案件的網域、主機、後台帳號都建在店家名下，不綁在諾豪資訊的帳號裡。</p></li>
       </ul>
