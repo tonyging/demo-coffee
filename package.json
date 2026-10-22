@@ -1,0 +1,23 @@
+{
+  "name": "demo-coffee",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "嵐岸咖啡 Lan’an Roastery — 諾豪資訊作品範例（Astro + Sanity）",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "import-seed": "node --env-file=.env scripts/import-seed.mjs"
+  },
+  "dependencies": {
+    "@sanity/client": "^8.10.1",
+    "astro": "^6.4.8"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,66 @@
+---
+import { renderBag } from '../lib/bag';
+import type { Bean } from '../lib/types';
+
+interface Props {
+  bean?: Bean;
+  seriesLabel?: string;
+}
+const { bean, seriesLabel } = Astro.props;
+
+const C = 260;
+const pol = (r: number, deg: number) => {
+  const a = (deg * Math.PI) / 180;
+  return [C + r * Math.sin(a), C - r * Math.cos(a)] as const;
+};
+const ticks = Array.from({ length: 120 }, (_, i) => {
+  const major = i % 10 === 0;
+  const mid = i % 5 === 0;
+  const [x1, y1] = pol(254, i * 3);
+  const [x2, y2] = pol(major ? 232 : mid ? 240 : 246, i * 3);
+  return { x1, y1, x2, y2, major };
+});
+const colors = ['#D9B98A', '#B98A55', '#8A5A34', '#5A3822', '#2A1A10'];
+const segs = colors.map((color, i) => {
+  const s = 222 + i * 56;
+  const e = s + 50;
+  const [x1, y1] = pol(176, s);
+  const [x2, y2] = pol(176, e);
+  return { d: `M${x1.toFixed(1)} ${y1.toFixed(1)}A176 176 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`, color };
+});
+const labs = [
+  { t: '淺', deg: 247 },
+  { t: '中', deg: 345 },
+  { t: '深', deg: 443 },
+].map((l) => ({ ...l, p: pol(156, l.deg) }));
+const bag = bean ? renderBag({ ...bean, seriesLabel }, 'hero') : '';
+---
+
+<div class="hero-art-wrap">
+<div class="hero-art" aria-hidden="false">
+  <svg class="dial" viewBox="0 0 520 520" role="img" aria-label="烘焙刻度盤插畫：一顆緩慢旋轉的咖啡豆，外圈是從淺焙到深焙的刻度" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="dial-path" d="M260 260m-206 0a206 206 0 1 1 412 0a206 206 0 1 1-412 0" />
+    </defs>
+    <g class="dial__ticks">
+      {ticks.map((t) => <line class={`dial__tick${t.major ? ' dial__tick--major' : ''}`} x1={t.x1.toFixed(1)} y1={t.y1.toFixed(1)} x2={t.x2.toFixed(1)} y2={t.y2.toFixed(1)} />)}
+    </g>
+    <g class="dial__text">
+      <text><textPath href="#dial-path" textLength="1280" lengthAdjust="spacing">LAN’AN ROASTERY · SMALL BATCH · DADAOCHENG TAIPEI · ROASTED WEEKLY ·</textPath></text>
+    </g>
+    <circle class="dial__ring" cx="260" cy="260" r="190" />
+    {segs.map((s) => <path d={s.d} fill="none" stroke={s.color} stroke-width="7" stroke-linecap="round" />)}
+    <circle class="dial__disc" cx="260" cy="260" r="138" />
+    {labs.map((l) => <text x={l.p[0].toFixed(1)} y={(l.p[1] + 8).toFixed(1)} text-anchor="middle" class="dial__lab">{l.t}</text>)}
+    <g class="dial__needle-g"><path class="dial__needle" d="M260 62l-7-14h14z" /></g>
+    <g class="dial__beanwrap">
+      <g transform="translate(260 260) rotate(28)">
+        <ellipse class="dial__bean" rx="62" ry="90" />
+        <path class="dial__crease" d="M0-86C24-40-24 40 0 86" />
+      </g>
+    </g>
+  </svg>
+  {bean && <div class="hero-art__bag" set:html={bag} />}
+</div>
+<p class="hero-art__caption">烘焙刻度：由淺入深，慢慢來。</p>
+</div>

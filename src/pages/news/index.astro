@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getData } from '../../lib/data';
+import { newsListHtml, sig } from '../../lib/render';
+
+const data = await getData();
+const html = newsListHtml(data);
+const cats = ['最新消息', '咖啡知識'];
+---
+
+<Base title="最新消息" current="news" description="嵐岸咖啡的最新消息，以及關於沖煮、保存與烘焙的咖啡知識。">
+  <div class="page-head">
+    <div class="wrap">
+      <p class="eyebrow mono">Journal</p>
+      <h1>最新消息</h1>
+      <p class="lede">店裡的新豆、活動，還有一些寫給喝咖啡的人的小知識。</p>
+    </div>
+  </div>
+  <div class="wrap" style="padding-block: clamp(32px, 5vw, 64px) clamp(72px, 10vw, 140px)">
+    <div class="filter-row" role="group" aria-label="依分類篩選" data-news-filter style="margin-bottom: 32px">
+      <button class="chip" type="button" data-value="all" aria-pressed="true">全部</button>
+      {cats.map((c) => <button class="chip" type="button" data-value={c} aria-pressed="false">{c}</button>)}
+    </div>
+    <div data-live="news" data-sig={sig(html)} set:html={html} />
+  </div>
+</Base>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-news-filter]');
+  let cat = 'all';
+  function apply() {
+    document.querySelectorAll<HTMLElement>('.news-row').forEach((r) => {
+      r.hidden = cat !== 'all' && r.querySelector('.tag')?.textContent !== cat;
+    });
+    bar?.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.value === cat)));
+  }
+  bar?.addEventListener('click', (e) => {
+    const c = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
+    if (!c) return;
+    cat = c.dataset.value!;
+    apply();
+  });
+  addEventListener('live:updated', apply);
+</script>

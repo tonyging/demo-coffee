@@ -1,0 +1,121 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroArt from '../components/HeroArt.astro';
+import Hours from '../components/Hours.astro';
+import { getData } from '../lib/data';
+import { url } from '../lib/format';
+import { featuredHtml, news3Html, sig } from '../lib/render';
+
+const data = await getData();
+const { store } = data;
+const featured = data.beans.filter((b) => b.featured).slice(0, 3);
+const hero = featured[0] ?? data.beans[0];
+const heroSeries = data.series.find((s) => s.id === hero?.series)?.nameEn;
+const featHtml = featuredHtml(data);
+const newsHtml = news3Html(data);
+---
+
+<Base current="home">
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero__vertical" aria-hidden="true">大稻埕　小批烘焙　每週烘豆</span>
+      <div class="hero__text">
+        <p class="hero__eyebrow mono">Small-batch roastery · Taipei</p>
+        <h1>山的味道，<br />在岸邊<em>慢慢</em>烘開。</h1>
+        <p class="hero__lede">
+          嵐岸是一間藏在大稻埕的小型烘豆所。我們一次只烘一小鍋，每支豆子都試過再上架，把產地的風味，原原本本地交到你手上。
+        </p>
+        <div class="hero__cta">
+          <a class="btn" href={url('beans/')}>看看這季的豆子 <span class="arr" aria-hidden="true">→</span></a>
+          <a class="link-arrow" href={url('contact/')}>來門市坐坐 <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <p class="hero__meta mono">
+          <span><b class="num">{String(data.series.length).padStart(2, '0')}</b> 個系列</span>
+          <span><b class="num">{String(data.beans.length).padStart(2, '0')}</b> 款咖啡豆</span>
+          <span>每週烘焙</span>
+        </p>
+      </div>
+      <HeroArt bean={hero} seriesLabel={heroSeries} />
+    </div>
+  </section>
+
+  <section class="section section--alt home-featured-sec" aria-labelledby="feat-t">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <p class="sec-no mono">01 · 本季主打</p>
+          <h2 class="sec-title" id="feat-t">這一季，<br />我們想請你喝這三支。</h2>
+        </div>
+        <a class="link-arrow" href={url('beans/')}>全部 {data.beans.length} 款咖啡豆 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="bean-grid home-featured" data-live="featured" data-sig={sig(featHtml)} set:html={featHtml} />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="philo-t">
+    <div class="wrap philo">
+      <div class="reveal">
+        <p class="sec-no mono">02 · 烘焙理念</p>
+        <h2 class="quote" id="philo-t">咖啡不必複雜，<br />只要<em>誠實</em>。</h2>
+        <p class="lede" style="margin-top: 28px">
+          我們不追求最深、最酸或最稀有，只想讓每一支豆子，用適合它的方式被好好烘開。
+        </p>
+        <p style="margin-top: 28px"><a class="link-arrow" href={url('about/')}>認識嵐岸 <span class="arr" aria-hidden="true">→</span></a></p>
+      </div>
+      <ol class="principles">
+        <li class="reveal">
+          <span class="n">01</span>
+          <div><h3>小鍋慢烘</h3><p>每鍋只烘幾公斤，火力與時間依豆子的狀態微調，不用同一條曲線烘所有豆子。</p></div>
+        </li>
+        <li class="reveal" style="--d: 0.08s">
+          <span class="n">02</span>
+          <div><h3>每批杯測</h3><p>烘完一定先喝過。不夠好的批次，我們寧可不上架。</p></div>
+        </li>
+        <li class="reveal" style="--d: 0.16s">
+          <span class="n">03</span>
+          <div><h3>烘焙日期，標示清楚</h3><p>每週烘豆，烘好就出貨。每包都標示烘焙日期；剛烘好的豆子建議養幾天再沖煮，風味更穩。</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <aside class="edit-banner reveal" aria-label="後台入口">
+    <div class="wrap">
+      <p>這個網站的產品與消息，店家自己就能改<small>豆子、價格、圖片、消息與門市資訊，在後台改完按發佈就更新。</small></p>
+      <a class="link-arrow" href={url('backend-demo/')}>看看後台怎麼用 <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </aside>
+
+  <section class="section section--tight" aria-labelledby="news-t">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <p class="sec-no mono">03 · 最新消息</p>
+          <h2 class="sec-title" id="news-t">店裡最近的事</h2>
+        </div>
+        <a class="link-arrow" href={url('news/')}>更多消息與咖啡知識 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="reveal" data-live="news3" data-sig={sig(newsHtml)} set:html={newsHtml} />
+    </div>
+  </section>
+
+  <section class="section panel" aria-labelledby="store-t">
+    <div class="wrap store">
+      <div class="reveal">
+        <p class="sec-no mono">04 · 門市與烘豆室</p>
+        <h2 id="store-t">門市在大稻埕，<br />烘豆室就在後面。</h2>
+        <p class="open-status" data-open-status data-hours={JSON.stringify(store.hours)} role="status">查詢營業狀態…</p>
+        <p class="lede">來聞聞剛烘好的味道，也可以直接請吧台推薦一杯適合你的。</p>
+        <div class="store__cta">
+          <a class="btn" href={url('contact/')}>查看地圖與聯絡方式 <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href={url('beans/')}>先看看豆子</a>
+        </div>
+      </div>
+      <div class="reveal" style="--d: 0.1s">
+        <p class="eyebrow" style="margin-bottom: 10px">營業時間</p>
+        <Hours hours={store.hours} />
+        <p class="store-addr"><b data-store="address">{store.address}</b><span class="num" data-store="phone">{store.phone}</span></p>
+      </div>
+    </div>
+  </section>
+</Base>

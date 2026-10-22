@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/format';
+---
+
+<Base title="找不到頁面">
+  <div id="nf-loading" role="status" aria-live="polite">
+    <div class="page-head" style="border-bottom: 0; min-height: 50vh">
+      <div class="wrap">
+        <p class="eyebrow mono">Loading</p>
+        <h1>正在載入這一頁…</h1>
+        <p class="lede">這是剛在後台發佈的新項目，正在向後台讀取內容。</p>
+        <div class="nf-skel" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </div>
+  <div id="nf-static">
+    <div class="page-head" style="border-bottom: 0; min-height: 50vh">
+      <div class="wrap">
+        <p class="eyebrow mono">404</p>
+        <h1>這一頁，<br />好像被喝光了。</h1>
+        <p class="lede" style="margin-bottom: 32px">網址可能打錯了，或是這款豆子已經下架。</p>
+        <a class="btn" href={url('')}>回到首頁 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+  <div id="nf-dynamic" hidden></div>
+</Base>
+
+<script is:inline define:vars={{ base: import.meta.env.BASE_URL }}>
+  /* 在畫面第一次繪製前就決定要顯示「載入中」還是 404 文案，避免先閃出 404。
+     條件與下方載入腳本一致：有 Sanity 專案 ID，且網址像 beans|news/<slug>/。沒有 JS 時維持 404 文案。 */
+  (function () {
+    var meta = document.querySelector('meta[name="sanity-live"]');
+    var rel = location.pathname.indexOf(base) === 0 ? location.pathname.slice(base.length) : '';
+    if (meta && meta.content && /^(beans|news)\/[^/]+\/?$/.test(rel)) document.documentElement.setAttribute('data-nf', 'loading');
+  })();
+</script>
+
+<script>
+  /**
+   * GitHub Pages 對沒有預先建置的路徑一律回 404.html。
+   * 店家在後台新增豆子或消息、按下發佈後，新項目的靜態頁還不存在，
+   * 這裡就從 Sanity CDN 抓該項目，用與靜態頁相同的版型渲染；抓不到才維持 404。
+   */
+  import seed from '../data/seed.json';
+  import { normalize } from '../lib/format';
+  import { GROQ_ALL, SANITY_API_VERSION } from '../lib/queries';
+  import { beanDetailHtml, newsDetailHtml } from '../lib/render';
+  import type { SiteData } from '../lib/types';
+
+  let rendered = false;
+  async function run() {
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="sanity-live"]')?.content;
+    if (!meta) return;
+    const base = import.meta.env.BASE_URL;
+    const rel = location.pathname.startsWith(base) ? location.pathname.slice(base.length) : '';
+    const m = rel.match(/^(beans|news)\/([^/]+)\/?$/);
+    if (!m) return;
+    const kind = m[1];
+    let slug = m[2];
+    try {
+      slug = decodeURIComponent(slug);
+    } catch {}
+    const [projectId, dataset] = meta.split('|');
+    const endpoint = `https://${projectId}.apicdn.sanity.io/v${SANITY_API_VERSION}/data/query/${dataset}?query=${encodeURIComponent(GROQ_ALL)}`;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 8000);
+    let raw: any;
+    try {
+      const res = await fetch(endpoint, { signal: ctrl.signal });
+      if (!res.ok) return;
+      raw = (await res.json()).result;
+    } catch {
+      return;
+    } finally {
+      clearTimeout(timer);
+    }
+    if (!raw) return;
+    const data: SiteData = normalize(raw, seed as unknown as SiteData);
+    let html = '';
+    let title = '';
+    if (kind === 'beans') {
+      const bean = data.beans.find((b) => b.slug === slug);
+      if (!bean) return;
+      html = beanDetailHtml(bean, data);
+      title = bean.name;
+    } else {
+      const i = data.news.findIndex((n) => n.slug === slug);
+      if (i < 0) return;
+      html = newsDetailHtml(data.news[i], data.news[i - 1], data.news[i + 1]);
+      title = data.news[i].title;
+    }
+    const dyn = document.getElementById('nf-dynamic')!;
+    dyn.innerHTML = html;
+    dyn.hidden = false;
+    document.getElementById('nf-static')!.hidden = true;
+    document.title = `${title}｜嵐岸咖啡（作品範例）`;
+    rendered = true;
+    window.dispatchEvent(new CustomEvent('live:updated'));
+  }
+  // 不論成功或失敗：抓不到資料時才顯示 404 文案
+  run()
+    .catch(() => {})
+    .finally(() => {
+      if (!rendered) document.documentElement.removeAttribute('data-nf');
+      else document.getElementById('nf-loading')!.hidden = true;
+    });
+</script>

@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getData } from '../../lib/data';
+import { ROAST_LABELS } from '../../lib/format';
+import { beanSectionsHtml, sig } from '../../lib/render';
+
+const data = await getData();
+const html = beanSectionsHtml(data);
+const roasts = ROAST_LABELS.map((l, i) => ({ v: String(i + 1), l }));
+---
+
+<Base title="咖啡豆" current="beans" description="嵐岸咖啡的單品豆、配方豆、濾掛與限量批次，可依系列與烘焙度篩選。">
+  <div class="page-head">
+    <div class="wrap">
+      <p class="eyebrow mono">The Beans</p>
+      <h1>咖啡豆</h1>
+      <p class="lede">四個系列、{data.beans.length} 款豆子。每一款都由同一位烘豆師、同一台烘豆機烘出來，袋上標示烘焙度，挑一個你今天想喝的。</p>
+    </div>
+  </div>
+
+  <div class="filters" data-filters>
+    <div class="wrap">
+      <div class="filter-group" role="group" aria-label="依系列篩選">
+        <span class="mono">系列</span>
+        <span data-series-chips style="display: contents">
+          <button class="chip" type="button" data-group="series" data-value="all" aria-pressed="true">全部</button>
+          {data.series.filter((s) => data.beans.some((b) => b.series === s.id)).map((s) => (
+            <button class="chip" type="button" data-group="series" data-value={s.id} aria-pressed="false">{s.name}</button>
+          ))}
+        </span>
+      </div>
+      <div class="filter-group" role="group" aria-label="依烘焙度篩選">
+        <span class="mono">烘焙</span>
+        <button class="chip" type="button" data-group="roast" data-value="all" aria-pressed="true">全部</button>
+        {roasts.map((r) => <button class="chip" type="button" data-group="roast" data-value={r.v} aria-pressed="false">{r.l}</button>)}
+      </div>
+      <p class="filter-count mono" data-count aria-live="polite">顯示 {data.beans.length} 款</p>
+    </div>
+  </div>
+
+  <div class="wrap" style="padding-bottom: clamp(72px, 10vw, 140px)">
+    <div data-live="beans" data-sig={sig(html)} set:html={html} />
+    <div class="empty" data-empty hidden>
+      <p style="font-family: var(--serif); font-size: 1.4rem; margin-bottom: 16px">這個組合目前沒有豆子。</p>
+      <button class="btn btn--ghost" type="button" id="reset-filters">清除篩選</button>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import '../../scripts/beans.ts';
+</script>

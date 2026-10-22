@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import Hours from '../components/Hours.astro';
+import { getData } from '../lib/data';
+import { mapSrcFor } from '../lib/render';
+
+const data = await getData();
+const { store } = data;
+const mapSrc = mapSrcFor(store.mapQuery);
+---
+
+<Base title="聯絡我們" current="contact" description="嵐岸咖啡的門市資訊、營業時間與聯絡表單。（範例網站，地址與電話皆為虛構）">
+  <div class="page-head">
+    <div class="wrap">
+      <p class="eyebrow mono">Visit &amp; Contact</p>
+      <h1>來門市坐坐，<br />或留句話給我們。</h1>
+      <p class="lede">想先問問豆子、預約杯測，或是公司團購，都可以在這裡留言。</p>
+    </div>
+  </div>
+
+  <div class="wrap contact">
+    <div>
+      <dl class="info-list">
+        <div data-store-row><dt>門市地址</dt><dd data-store="address">{store.address}</dd></div>
+        <div data-store-row><dt>電話</dt><dd class="num" data-store="phone">{store.phone}</dd></div>
+        <div data-store-row><dt>Email</dt><dd class="num" data-store="email">{store.email}</dd></div>
+        <div>
+          <dt>營業時間</dt>
+          <dd>
+            <p class="open-status" data-open-status data-hours={JSON.stringify(store.hours)} role="status" style="margin: 6px 0 10px; border-color: var(--rule); color: var(--ink)">查詢營業狀態…</p>
+            <Hours hours={store.hours} />
+          </dd>
+        </div>
+      </dl>
+      <iframe
+        class="map"
+        data-store-map
+        title="門市位置地圖（示意：大稻埕一帶）"
+        src={mapSrc}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+      <p class="map-note" data-store="addressNote">{store.addressNote}</p>
+    </div>
+
+    <div>
+      <h2 style="font-size: clamp(1.7rem, 3vw, 2.4rem); margin-bottom: 8px">留言給我們</h2>
+      <p class="form-note" style="margin-bottom: 28px">範例網站不會真的送出，也不會儲存你輸入的任何內容。</p>
+      <form class="form" id="contact-form" novalidate>
+        <div class="field">
+          <label for="f-name">姓名 <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" />
+          <p class="err" id="e-name">請輸入你的姓名。</p>
+        </div>
+        <div class="field">
+          <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email" />
+          <p class="err" id="e-email">請輸入正確的 Email，例如 name@example.com。</p>
+        </div>
+        <div class="field">
+          <label for="f-topic">想詢問的事項</label>
+          <select id="f-topic" name="topic">
+            <option>詢問咖啡豆</option>
+            <option>預約公開杯測</option>
+            <option>公司團購與批發</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-msg">訊息內容 <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="f-msg" name="message" required aria-describedby="h-msg e-msg"></textarea>
+          <p class="hint" id="h-msg">至少 2 個字。</p>
+          <p class="err" id="e-msg">請寫下想詢問的內容（至少 2 個字）。</p>
+        </div>
+        <div>
+          <button class="btn" type="submit">送出留言 <span class="arr" aria-hidden="true">→</span></button>
+        </div>
+      </form>
+      <div class="success" id="contact-success" hidden role="status" tabindex="-1">
+        <h3>謝謝你的留言</h3>
+        <p>這是範例網站，訊息並沒有真的送出。正式上線後，你會在這裡看到確認訊息，店家也會收到通知信。</p>
+        <p style="margin-top: 20px"><button class="btn btn--ghost" type="button" id="contact-again">再試一次</button></p>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const ok = document.getElementById('contact-success') as HTMLElement | null;
+  const rules: Record<string, (v: string) => boolean> = {
+    name: (v) => v.trim().length >= 1,
+    email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
+    message: (v) => v.trim().length >= 2,
+  };
+  function check(el: HTMLInputElement | HTMLTextAreaElement) {
+    const rule = rules[el.name];
+    if (!rule) return true;
+    const good = rule(el.value);
+    el.closest('.field')?.classList.toggle('has-error', !good);
+    el.setAttribute('aria-invalid', String(!good));
+    return good;
+  }
+  form?.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea').forEach((el) => {
+    el.addEventListener('blur', () => el.value && check(el));
+    el.addEventListener('input', () => el.closest('.field')?.classList.contains('has-error') && check(el));
+  });
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const bad = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input, textarea')).filter((el) => !check(el));
+    if (bad.length) return bad[0].focus();
+    form.hidden = true;
+    if (ok) {
+      ok.hidden = false;
+      ok.focus();
+    }
+  });
+  document.getElementById('contact-again')?.addEventListener('click', () => {
+    form?.reset();
+    if (form) form.hidden = false;
+    if (ok) ok.hidden = true;
+    form?.querySelector<HTMLInputElement>('input')?.focus();
+  });
+</script>

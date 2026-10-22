@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/format';
+
+// 烘焙曲線（示意）：用 Catmull-Rom 轉成平滑貝茲曲線
+const pts: [number, number][] = [[60, 60], [80, 175], [110, 232], [160, 218], [240, 178], [330, 140], [430, 108], [540, 84], [660, 64]];
+let d = `M${pts[0][0]} ${pts[0][1]}`;
+for (let i = 0; i < pts.length - 1; i++) {
+  const p0 = pts[i - 1] ?? pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] ?? p2;
+  const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+  const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+  d += `C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0]} ${p2[1]}`;
+}
+const marks = [
+  { p: pts[2], t: '回溫點', dx: 10, dy: 24, a: 'start', nx: 0, ny: 38 },
+  { p: pts[4], t: '轉黃', dx: 8, dy: 26, a: 'start', nx: 0, ny: 40 },
+  { p: pts[6], t: '一爆', dx: 8, dy: 26, a: 'start', nx: 0, ny: 40 },
+  { p: pts[8], t: '出豆', dx: 0, dy: 26, a: 'end', nx: -4, ny: 42 },
+];
+const timeline = [
+  ['2019', '在朋友的車庫烘出第一鍋，四個人喝完了全部。'],
+  ['2021', '搬進大稻埕的老房子，前面是門市，後面是烘豆室。'],
+  ['2023', '開始每月一次的公開杯測，認識了許多常客。'],
+  ['2025', '推出行囊濾掛，讓門市的味道可以帶去很遠的地方。'],
+];
+---
+
+<Base title="關於我們" current="about" description="嵐岸咖啡的品牌故事、烘焙理念與烘豆師。">
+  <div class="page-head">
+    <div class="wrap">
+      <p class="eyebrow mono">About</p>
+      <h1>慢慢烘，<br />把話說得少一點。</h1>
+      <p class="lede">嵐是山裡的霧氣，岸是水邊的停靠。我們把兩個人的名字合在一起，也把一個願望放進去：讓咖啡從山上來，到岸邊停下。</p>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="story-t">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="sec-no mono">01 · 品牌故事</p>
+        <h2 id="story-t">從一鍋咖啡，<br />到一間小店。</h2>
+      </div>
+      <div>
+        <div class="prose reveal">
+          <p>嵐岸起初只是兩個喜歡咖啡的人，週末在車庫裡用小烘豆機一鍋一鍋地試。喜歡的豆子很多，但市面上買到的，總是少了一點什麼：有的烘得太急，有的太保守，有的只剩下苦。</p>
+          <p>於是我們決定自己烘。每一次下豆、降溫、杯測，都留下紀錄，慢慢找到每支豆子該有的樣子。後來，朋友開始來車庫拿豆子；再後來，就有了現在這間在大稻埕的小店。</p>
+          <p>我們不做很大，也不趕時間。想要的，只是在你每天最需要的那幾分鐘，給你一杯穩定、乾淨、有溫度的咖啡。</p>
+        </div>
+        <ol class="timeline" style="margin-top: 56px">
+          {timeline.map(([y, t], i) => (
+            <li class="reveal" style={`--d:${i * 0.06}s`}><span class="yr">{y}</span><p>{t}</p></li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section panel" aria-labelledby="roast-t">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="sec-no mono">02 · 烘焙理念</p>
+        <h2 id="roast-t">烘焙是一條<br />慢慢爬升的曲線。</h2>
+        <p class="lede" style="margin-top: 24px">每支豆子的密度、含水率與處理法都不同，沒有一條曲線適合所有豆子。我們把重點放在三件事：</p>
+        <ul class="principles" style="margin-top: 28px; color: var(--panel-ink)">
+          <li style="border-color: rgba(255,255,255,.2)"><span class="n" style="color: var(--panel-accent)">A</span><div><h3>回溫之後，不急著衝</h3><p style="color: var(--panel-ink-2)">前段讓豆子均勻吸熱，風味才有基礎。</p></div></li>
+          <li style="border-color: rgba(255,255,255,.2)"><span class="n" style="color: var(--panel-accent)">B</span><div><h3>一爆前後，慢下來</h3><p style="color: var(--panel-ink-2)">控制升溫速度，讓酸質與甜感好好發展。</p></div></li>
+          <li style="border-color: rgba(255,255,255,.2)"><span class="n" style="color: var(--panel-accent)">C</span><div><h3>出豆之後，馬上降溫</h3><p style="color: var(--panel-ink-2)">鎖住香氣，避免餘熱把風味悶掉。</p></div></li>
+        </ul>
+      </div>
+      <div class="curve-wrap reveal" style="--d: 0.1s">
+        <svg class="curve" viewBox="0 -12 720 332" role="img" aria-label="烘焙曲線示意圖：豆溫先下降到回溫點，再逐漸上升，經過轉黃與一爆，最後出豆">
+          {[60, 120, 180, 240].map((y) => <line class="c-grid" x1="60" x2="690" y1={y} y2={y} />)}
+          <line class="c-grid" x1="60" x2="60" y1="30" y2="270" />
+          <line class="c-grid" x1="60" x2="690" y1="270" y2="270" />
+          <path class="c-line" d={d} pathLength="1" />
+          {marks.map((m) => (
+            <g>
+              <circle class="c-pt" cx={m.p[0]} cy={m.p[1]} r="4.5" />
+              <text class="c-lab" x={m.p[0] + m.dx} y={m.p[1] + m.dy} text-anchor={m.a}>{m.t}</text>
+              <text class="c-num" x={m.p[0] + m.nx} y={m.p[1] + m.ny} text-anchor="middle">{marks.indexOf(m) + 1}</text>
+            </g>
+          ))}
+          <text x="60" y="296">0</text>
+          <text class="c-ax" x="690" y="296" text-anchor="end">時間 TIME →</text>
+          <text class="c-ax" x="66" y="24">豆溫 °C</text>
+        </svg>
+        <ol class="curve-legend" aria-label="曲線上的標記">
+          {marks.map((m) => <li>{m.t}</li>)}
+        </ol>
+        <p class="curve-legend-axes">橫軸是時間，縱軸是豆溫（°C）。</p>
+        <p class="mono" style="margin-top: 16px; color: var(--panel-ink-2); text-transform: none; letter-spacing: 0.06em">示意圖，非實際烘焙數據。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="people-t">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <p class="sec-no mono">03 · 烘豆師與吧台</p>
+          <h2 class="sec-title" id="people-t">兩個人，<br />一間小店。</h2>
+        </div>
+      </div>
+      <div class="people">
+        <article class="person reveal">
+          <div class="person__mono" aria-hidden="true">嵐</div>
+          <div>
+            <h3>沈嵐</h3>
+            <p class="eyebrow role">烘豆師 · Roaster</p>
+            <p>負責選豆、烘焙與杯測。習慣在清晨第一個到烘豆室，聞完第一鍋的味道才開始一天。最喜歡的是淺焙的花香。</p>
+          </div>
+        </article>
+        <article class="person reveal" style="--d: 0.1s">
+          <div class="person__mono" aria-hidden="true">岸</div>
+          <div>
+            <h3>周岸</h3>
+            <p class="eyebrow role">吧台與品質 · Barista</p>
+            <p>負責門市吧台與沖煮研究。記得每位常客習慣的口味，也最擅長把一支豆子，說成你聽得懂的味道。</p>
+          </div>
+        </article>
+      </div>
+      <p class="form-note" style="margin-top: 20px">人物為虛構，以文字設計呈現。</p>
+      <div style="margin-top: 56px; display: flex; gap: 16px 28px; flex-wrap: wrap; align-items: center">
+        <a class="btn" href={url('beans/')}>看看我們的豆子 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="link-arrow" href={url('contact/')}>約個時間來聊聊 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>

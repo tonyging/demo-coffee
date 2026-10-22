@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getData } from '../../lib/data';
+import { newsDetailHtml, sig } from '../../lib/render';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  return data.news.map((item, i) => ({
+    params: { slug: item.slug },
+    props: { item, newer: data.news[i - 1], older: data.news[i + 1] },
+  }));
+}
+const { item, newer, older } = Astro.props;
+const html = newsDetailHtml(item, newer, older);
+---
+
+<Base title={item.title} current="news" description={item.excerpt}>
+  <div data-live-detail="news" data-slug={item.slug} data-sig={sig(html)} set:html={html} />
+</Base>

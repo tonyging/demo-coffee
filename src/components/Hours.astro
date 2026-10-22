@@ -1,0 +1,13 @@
+---
+import type { HoursRow } from '../lib/types';
+import { hoursRowsHtml } from '../lib/render';
+interface Props {
+  hours: HoursRow[];
+}
+const { hours } = Astro.props;
+---
+
+<table class="hours">
+  <caption class="sr-only">營業時間</caption>
+  <tbody data-store-hours set:html={hoursRowsHtml(hours)} />
+</table>

@@ -1,0 +1,466 @@
+---
+import Base from '../layouts/Base.astro';
+import { renderBag } from '../lib/bag';
+import { newsRow } from '../lib/render';
+import { url, formatPrice } from '../lib/format';
+import { getData } from '../lib/data';
+
+const colors = [
+  ['赤陶', '#B5562B'],
+  ['苔綠', '#5E6B4A'],
+  ['霧藍', '#5B7385'],
+  ['焦糖', '#A9743A'],
+  ['墨黑', '#2A211B'],
+  ['酒紅', '#7A2E34'],
+  ['沙灰', '#B9AD9A'],
+  ['暗青', '#2F4B4B'],
+  ['鼠尾草', '#8E9A82'],
+  ['奶茶', '#D2B596'],
+];
+const demo = { name: '安提瓜 火山', origin: '瓜地馬拉', region: '', process: '', roast: 3, weight: 200, bagColor: '#5E6B4A', seriesLabel: 'Single Origin' };
+const bag = renderBag(demo, 'demo');
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date());
+const newsPreview = newsRow({ id: 'x', slug: 'x', title: '本週新到貨：安提瓜火山', category: '最新消息', date: today, excerpt: '', body: [] }, { link: false });
+const data = await getData();
+const seriesName = new Map(data.series.map((x) => [x.id, x.name]));
+const listRows = data.beans.slice(0, 8).map((b) => ({ name: b.name, series: seriesName.get(b.series) ?? '', price: formatPrice(b.price), thumb: renderBag({ ...b, seriesLabel: '' }, `lt-${b.slug}`) }));
+const seriesList = data.series.map((s) => s.name);
+const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
+---
+
+<Base title="後台怎麼用" current="backend" description="嵐岸咖啡網站的後台示意：三個步驟，登入、新增一款豆子、發一則消息。">
+  <div class="page-head">
+    <div class="wrap">
+      <p class="eyebrow mono">How the backend works</p>
+      <h1>後台怎麼用？<br />三個步驟就夠了。</h1>
+      <p class="lede">網站上的豆子、價格、圖片與消息，都由店家自己在後台修改，不必寫程式。產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。下面是示意畫面，其中的欄位可以直接試著輸入。</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="wrap steps">
+      <!-- Step 1 -->
+      <article class="step">
+        <div class="step__text reveal">
+          <p class="step__no num">1</p>
+          <h2>登入後台</h2>
+          <p class="lede" style="font-size: 1.05rem">打開專屬的後台網址登入。登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。只有被邀請的人進得去。</p>
+          <ol>
+            <li>打開後台網址（上線後由諾豪資訊提供）</li>
+            <li>選擇登入方式（受邀的 Email 要用同一種方式登入）</li>
+            <li>進入內容管理畫面</li>
+          </ol>
+        </div>
+        <div class="win reveal" style="--d: 0.1s" role="img" aria-label="後台登入畫面示意">
+          <div class="win__bar"><i></i><i></i><i></i><span class="win__url">https://你的店名.sanity.studio</span></div>
+          <div class="win__body">
+            <div class="mock-login">
+              <p class="logo">嵐岸咖啡</p>
+              <p class="sub">內容管理後台</p>
+              <div class="mock-btn mock-btn--p">使用 Google 登入</div>
+              <div class="mock-btn">使用 GitHub 登入</div>
+              <p class="sub" style="margin-top: 16px">也可用 Email 登入・僅限受邀的店家成員</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Step 2 -->
+      <article class="step">
+        <div class="step__text reveal">
+          <p class="step__no num">2</p>
+          <h2>新增一款豆子</h2>
+          <p class="lede" style="font-size: 1.05rem">先選品牌系列，再按新增，填入名稱、產地、烘焙度與價格，選一個袋子的顏色，按發佈。</p>
+          <ol>
+            <li>左側打開「咖啡豆・依系列」，點一個品牌系列（真實後台會一欄一欄往右展開），按右上角的「＋」（所屬系列會自動帶入；從「全部豆子」新增的話，要自己選所屬系列）</li>
+            <li>填寫名稱、產地、烘焙度、風味與價格；有產品照片的話可以一併上傳（選填，沒有照片時網站會顯示依資料畫出的袋子）。網址代稱會自動產生，不用填</li>
+            <li>用色票選袋子顏色，切到上方「袋子預覽」分頁確認袋子</li>
+            <li>按「發佈」。按下發佈後，重新整理網站就看得到，這款豆子的專屬頁面也會跟著更新（搜尋引擎收錄的但書見下方）</li>
+          </ol>
+          <p class="callout">試試看：改豆名、風味、價格或顏色，再切到「袋子預覽」，袋子會跟著變。你不用按儲存，後台會自動存成草稿；按「發佈」才會上網站。網站上每一個產品袋，就是這樣由資料自動畫出來的。</p>
+          <p class="note">新增、修改、刪除都會在幾秒內反映在網站上（列表與詳細頁都是；刪除的項目會顯示「已下架」）。搜尋引擎收錄與分享預覽要等下次網站重新建置（可設定為發佈後自動建置）。</p>
+          <p class="note">關於示意畫面：真實後台是「逐欄展開」，依序是「網站內容」→「咖啡豆・依系列」→「選擇品牌系列」→「這個系列的豆子」→ 編輯畫面。這裡的示意把四個系列直接縮排在側欄，方便一次看完；欄位與順序以真實後台為準。</p>
+        </div>
+        <div class="win reveal" style="--d: 0.1s">
+          <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/bean;新增咖啡豆</span></div>
+          <div class="win__body">
+            <div class="mock-shell">
+              <ul class="mock-side" aria-hidden="true">
+                <b>內容</b>
+                <li class="on">咖啡豆・依系列</li>
+                {seriesList.map((s) => <li class="sub-li">{s}</li>)}
+                <li>全部豆子</li>
+                <li>系列設定</li>
+                <li>最新消息</li>
+                <li>門市資訊</li>
+              </ul>
+              <div class="mock-main">
+                <div class="mock-head"><h3>新增咖啡豆</h3><span class="mock-plus" aria-hidden="true">＋</span></div>
+                <div class="mock-tabs" role="tablist" aria-label="後台檢視">
+                  <button type="button" role="tab" id="tab-edit" aria-selected="true" aria-controls="pane-edit">編輯</button>
+                  <button type="button" role="tab" id="tab-prev" aria-selected="false" aria-controls="pane-prev" tabindex="-1">袋子預覽</button>
+                </div>
+                <div class="mock-live" id="demo-bean" style={`--bag:${demo.bagColor}`}>
+                  <div id="pane-edit" role="tabpanel" aria-labelledby="tab-edit">
+                    <div class="mock-field">
+                      <label for="d-name">豆子名稱</label>
+                      <small>會顯示在產品卡片與袋子標籤上。</small>
+                      <input id="d-name" type="text" value={demo.name} maxlength="16" />
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-slug">網址代稱（自動產生）</label>
+                      <small>填好名稱就會自動產生，成為這款豆子的網址，不用自己填。</small>
+                      <input id="d-slug" type="text" value="bean-xxxx" readonly />
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-series">所屬系列</label>
+                      <select id="d-series">
+                        {seriesList.map((s, i) => <option selected={i === 0}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-origin">產地（國家）</label>
+                      <input id="d-origin" type="text" value={demo.origin} maxlength="14" />
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-roast">烘焙度</label>
+                      <select id="d-roast">
+                        {roastOpts.map((r, i) => <option value={i + 1} selected={i === 2}>{r}</option>)}
+                      </select>
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-notes">風味</label>
+                      <input id="d-notes" type="text" value="焦糖　堅果　可可" maxlength="20" />
+                    </div>
+                    <div class="mock-field">
+                      <label for="d-price">價格（NT$）</label>
+                      <input id="d-price" type="number" value="520" min="0" max="9999" inputmode="numeric" />
+                    </div>
+                    <div class="mock-field">
+                      <label id="d-color-l">袋子顏色</label>
+                      <div class="swatches" role="group" aria-labelledby="d-color-l">
+                        {colors.map(([n, c]) => (
+                          <button class="swatch" type="button" style={`--c:${c}`} data-color={c} aria-label={n} aria-pressed={c === demo.bagColor ? 'true' : 'false'}></button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mock-live__bag" id="pane-prev" role="tabpanel" aria-labelledby="tab-prev" hidden>
+                    <div id="demo-bag" set:html={bag} />
+                    <p class="cap">袋子預覽</p>
+                    <p class="mock-price"><span class="num" id="d-price-out">NT$ 520</span> / 200 g</p>
+                    <p class="mock-price" id="d-notes-out">焦糖　堅果　可可</p>
+                  </div>
+                </div>
+                <div class="mock-publish">
+                  <span class="mock-state" id="d-state" role="status">草稿</span>
+                  <p class="mock-toast" id="d-toast" role="status" aria-live="polite"></p>
+                  <button type="button" class="go" data-demo="publish" data-target="d">發佈</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Step 3 -->
+      <article class="step">
+        <div class="step__text reveal">
+          <p class="step__no num">3</p>
+          <h2>發一則消息</h2>
+          <p class="lede" style="font-size: 1.05rem">新品上架、活動預告、咖啡小知識，寫完按「發佈」。按下發佈後，重新整理網站就看得到。</p>
+          <ol>
+            <li>左側選「最新消息」，按「＋」</li>
+            <li>寫標題、選分類、輸入內文</li>
+            <li>按「發佈」</li>
+            <li>重新整理網站，消息就出現在首頁與消息頁</li>
+          </ol>
+          <p class="note">新增、修改、刪除都會在幾秒內反映在網站上（列表與詳細頁都是；刪除的項目會顯示「已下架」）。搜尋引擎收錄與分享預覽要等下次網站重新建置（可設定為發佈後自動建置）。</p>
+          <p class="callout">想先存起來、之後再發？不用按任何鈕，後台會自動存成草稿；草稿不會出現在網站上，準備好再按「發佈」。</p>
+        </div>
+        <div class="win reveal" style="--d: 0.1s">
+          <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/news;新增消息</span></div>
+          <div class="win__body">
+            <div class="mock-shell">
+              <ul class="mock-side" aria-hidden="true">
+                <b>內容</b>
+                <li>咖啡豆・依系列</li>
+                
+                <li>全部豆子</li>
+                <li>系列設定</li>
+                <li class="on">最新消息</li>
+                <li>門市資訊</li>
+              </ul>
+              <div class="mock-main">
+                <div class="mock-head"><h3>新增消息</h3><span class="mock-plus" aria-hidden="true">＋</span></div>
+                <div class="mock-field">
+                  <label for="n-title">標題</label>
+                  <input id="n-title" type="text" value="本週新到貨：安提瓜火山" maxlength="30" />
+                </div>
+                <div class="mock-field">
+                  <label for="n-cat">分類</label>
+                  <select id="n-cat"><option>最新消息</option><option>咖啡知識</option></select>
+                </div>
+                <div class="mock-field">
+                  <label for="n-body">內文</label>
+                  <textarea id="n-body">安提瓜的新豆已經烘好，口感厚實，帶著焦糖與堅果的甜。歡迎來門市試喝。</textarea>
+                </div>
+                <p class="block-title" style="margin: 18px 0 4px">發佈後，網站的消息列表會這樣顯示（示意）</p>
+                <div id="n-preview" style="border-top: 1px solid var(--rule)" set:html={`<ul class="news-list" style="border-top:0">${newsPreview}</ul>`} />
+                <div class="mock-publish">
+                  <span class="mock-state" id="n-state" role="status">草稿</span>
+                  <p class="mock-toast" id="n-toast" role="status" aria-live="polite"></p>
+                  <button type="button" class="go" data-demo="publish" data-target="n">發佈</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Products -->
+      <article class="step">
+        <div class="step__text reveal">
+          <p class="step__no num">＋</p>
+          <h2>產品變多也管得動</h2>
+          <p class="lede" style="font-size: 1.05rem">品牌有十幾個、產品有幾十項也沒問題：依系列瀏覽、依名稱搜尋，每一項都能附上產品照片，後台可管理上百項產品。</p>
+          <ol>
+            <li>左側點一個品牌系列，只看那個系列的豆子；想看全部就點「全部豆子」</li>
+            <li>在搜尋框輸入名稱，清單立刻篩選（清單會顯示豆名、系列與價格）</li>
+            <li>點進任何一項，修改文字或更換照片</li>
+          </ol>
+        </div>
+        <div class="win reveal" style="--d: 0.1s">
+          <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/bean</span></div>
+          <div class="win__body">
+            <div class="mock-main" style="padding: 0">
+              <h3>產品清單</h3>
+              <label class="visually-hidden" for="p-search" style="position:absolute;left:-9999px">搜尋產品</label>
+              <input class="mock-search" id="p-search" type="search" placeholder="搜尋產品名稱" autocomplete="off" />
+              <table class="mock-table">
+                <tbody id="p-rows">
+                  {listRows.map((r) => (
+                    <tr data-q={r.name.toLowerCase()}>
+                      <td style="width: 44px"><span class="thumb" set:html={r.thumb}></span></td>
+                      <td>{r.name}<br /><span class="sub">{r.series}・{r.price}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p class="mock-empty" id="p-empty" hidden>找不到符合的產品。</p>
+              <p class="mock-count"><b id="p-n">{listRows.length}</b> / 共 64 項（示意）。可管理上百項產品，每項都能附照片。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="ops-t">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <p class="sec-no mono">費用與維運</p>
+          <h2 class="sec-title" id="ops-t">之後要花什麼、找誰？</h2>
+        </div>
+      </div>
+      <div class="ops reveal">
+        <div>
+          <h3>後台費用</h3>
+          <p>後台使用 Sanity。依其<a href="https://www.sanity.io/pricing" target="_blank" rel="noopener">官方方案頁</a>（2026 年 10 月 22 日查證），免費方案（Free，每月 0 美元）和本站相關的額度是：</p>
+          <ul>
+            <li>使用者（Seats）：Free 20 人、Growth 50 人</li>
+            <li>權限角色（# roles available）：Free 只有「管理員」與「檢視者」2 種，能編輯內容的人都是管理員，權限很大（包含專案設定）；若要「只能改內容、不能改設定」的細分權限，需升級 Growth（5 種角色，每位使用者每月 15 美元）</li>
+            <li>文件數上限：Free 1 萬份、Growth 2.5 萬份</li>
+            <li>資產（圖片等檔案）空間 100 GB（Free 與 Growth 相同）</li>
+            <li>每月 API 請求 25 萬次、CDN 請求 100 萬次</li>
+            <li>每月頻寬 100 GB</li>
+            <li>草稿的變更紀錄（Review Changes: Drafts）保留 3 天；Growth 方案 90 天。「完整歷史」（Complete history）免費與 Growth 方案都不含</li>
+          </ul>
+          <p style="margin-top: 10px">免費方案的資料集是公開的，任何人都能讀取；本站的內容（豆子、消息、門市資訊）本來就公開在網站上，所以沒有影響。需要私有資料集、更多文件或更長的紀錄時，才需要升級付費方案（依官方公告，Growth 方案每位使用者每月 15 美元起，實際以官方方案頁為準）。網域等其他費用，洽談時一併列清楚。</p>
+        </div>
+        <div>
+          <h3>維運與改版</h3>
+          <p>門市的地址、電話、營業時間在後台改完按發佈，重新整理後，首頁、聯絡頁與頁尾都會更新。</p>
+          <p>產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。</p>
+          <p>日常維運、網站改版與後台教學，也都可以委託<a href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">諾豪資訊</a>處理。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section panel" aria-labelledby="trust-t">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div>
+          <p class="sec-no mono">放心使用</p>
+          <h2 class="sec-title" id="trust-t">放心自己管，發佈前先預覽。</h2>
+        </div>
+      </div>
+      <ul class="trust">
+        <li class="reveal"><h3>只有受邀的人能登入</h3><p>登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。帳號由店家邀請與管理，可以隨時移除離職同仁的存取權。</p></li>
+        <li class="reveal" style="--d: 0.08s"><h3>草稿先存、發佈前可預覽</h3><p>草稿紀錄在免費方案只保留 3 天（Growth 方案 90 天），已發佈內容的完整修改歷史免費與 Growth 都沒有，所以重要內容仍建議自己留底。後台會自動存草稿，發佈前可以先預覽。</p></li>
+        <li class="reveal" style="--d: 0.16s"><h3>前台只讀取公開內容</h3><p>網站本身是靜態頁面；內容存在 Sanity 雲端，前台只讀取公開內容。全站使用 HTTPS。</p></li>
+        <li class="reveal" style="--d: 0.24s"><h3>網站與帳號在店家名下</h3><p>本範例放在諾豪資訊的帳號下；正式案件的網域、主機、後台帳號都建在店家名下，不綁在諾豪資訊的帳號裡。</p></li>
+      </ul>
+      <div class="store__cta" style="margin-top: 48px">
+        <a class="btn" href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">我也想要這樣的網站 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn--ghost" href="https://line.me/R/ti/p/@879gqgah" target="_blank" rel="noopener">LINE 詢問 <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { renderBag } from '../lib/bag';
+  import { newsRow } from '../lib/render';
+
+  const q = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+  const name = q<HTMLInputElement>('d-name');
+  const origin = q<HTMLInputElement>('d-origin');
+  const roast = q<HTMLSelectElement>('d-roast');
+  const notes = q<HTMLInputElement>('d-notes');
+  const price = q<HTMLInputElement>('d-price');
+  const slug = q<HTMLInputElement>('d-slug');
+  const series = q<HTMLSelectElement>('d-series');
+  const bagEl = q('demo-bag');
+  const wrap = q('demo-bean');
+  const dState = q('d-state');
+  const nState = q('n-state');
+  const bagBox = q('pane-prev');
+  let color = '#5E6B4A';
+
+  function drawBag() {
+    if (!bagEl || !name || !origin || !roast) return;
+    bagEl.innerHTML = renderBag(
+      { name: name.value || '豆子名稱', origin: origin.value || '產地', region: '', process: '', roast: Number(roast.value), weight: 200, bagColor: color, seriesLabel: 'Single Origin' },
+      'demo'
+    );
+    wrap?.style.setProperty('--bag', color);
+    const po = q('d-price-out');
+    const no = q('d-notes-out');
+    if (po && price) po.textContent = 'NT$ ' + Number(price.value || 0).toLocaleString('en-US');
+    if (no && notes) no.textContent = notes.value;
+  }
+
+  /* 網址代稱：名稱第一次填好就自動產生（英數字照用，純中文用雜湊碼），之後不跟著改名變動 */
+  let slugSet = false;
+  function drawSlug() {
+    if (!slug || !name || slugSet) return;
+    const t = name.value.trim();
+    if (!t) return;
+    const ascii = t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    let h = 5381;
+    for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+    slug.value = ascii.length >= 3 ? ascii : 'bean-' + (ascii ? ascii + '-' : '') + (h >>> 0).toString(36);
+    slugSet = true;
+  }
+  drawSlug();
+
+  /* 後台會自動存草稿：任何修改都立刻變成「已自動存成草稿」 */
+  function autoDraft(which: 'd' | 'n') {
+    if (which === 'd') {
+      bagBox?.classList.remove('is-published');
+      if (dState) dState.textContent = '已自動存成草稿';
+    } else if (nState) {
+      nState.textContent = '已自動存成草稿';
+    }
+  }
+  [name, origin, roast, notes, price, series].forEach((el) => {
+    const on = () => {
+      drawBag();
+      drawSlug();
+      autoDraft('d');
+    };
+    el?.addEventListener('input', on);
+    el?.addEventListener('change', on);
+  });
+  document.querySelectorAll<HTMLButtonElement>('.swatch').forEach((b) =>
+    b.addEventListener('click', () => {
+      color = b.dataset.color!;
+      document.querySelectorAll('.swatch').forEach((s) => s.setAttribute('aria-pressed', String(s === b)));
+      drawBag();
+      autoDraft('d');
+    })
+  );
+
+  /* 分頁：編輯 / 袋子預覽 */
+  const tabE = q('tab-edit');
+  const tabP = q('tab-prev');
+  const paneE = q('pane-edit');
+  function showTab(preview: boolean) {
+    if (!tabE || !tabP || !paneE || !bagBox) return;
+    tabE.setAttribute('aria-selected', String(!preview));
+    tabP.setAttribute('aria-selected', String(preview));
+    tabE.tabIndex = preview ? -1 : 0;
+    tabP.tabIndex = preview ? 0 : -1;
+    paneE.hidden = preview;
+    bagBox.hidden = !preview;
+    if (preview) drawBag();
+  }
+  tabE?.addEventListener('click', () => showTab(false));
+  tabP?.addEventListener('click', () => showTab(true));
+  [tabE, tabP].forEach((t) =>
+    t?.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        const toPrev = t === tabE;
+        showTab(toPrev);
+        (toPrev ? tabP : tabE)?.focus();
+      }
+    })
+  );
+
+  /* 消息 */
+  const nt = q<HTMLInputElement>('n-title');
+  const nc = q<HTMLSelectElement>('n-cat');
+  const np = q('n-preview');
+  function drawNews() {
+    if (!nt || !nc || !np) return;
+    np.innerHTML =
+      '<ul class="news-list" style="border-top:0">' +
+      newsRow({ id: 'x', slug: 'x', title: nt.value || '（尚未輸入標題）', category: nc.value === '咖啡知識' ? '咖啡知識' : '最新消息', date: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date()), excerpt: '', body: [] }, { link: false }) +
+      '</ul>';
+  }
+  [nt, nc, q<HTMLTextAreaElement>('n-body')].forEach((el) => {
+    el?.addEventListener('input', () => autoDraft('n'));
+    el?.addEventListener('change', () => autoDraft('n'));
+  });
+
+  /* 只留「發佈」：發佈後狀態更新 */
+  const timers: Record<string, number> = {};
+  document.querySelectorAll<HTMLButtonElement>('[data-demo="publish"]').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const which = btn.dataset.target as 'd' | 'n';
+      const toast = q(which + '-toast');
+      if (which === 'd') {
+        drawBag();
+        bagBox?.classList.add('is-published');
+        if (dState) dState.textContent = '已發佈（示範）';
+      } else {
+        drawNews();
+        if (nState) nState.textContent = '已發佈（示範）';
+      }
+      if (toast) {
+        toast.textContent = '示範：已發佈。真實網站按下發佈後，重新整理就看得到，新項目與修改過的頁面也會跟著更新。';
+        clearTimeout(timers[which]);
+        timers[which] = window.setTimeout(() => (toast.textContent = ''), 5000);
+      }
+    })
+  );
+
+  /* 產品清單搜尋 */
+  const ps = q<HTMLInputElement>('p-search');
+  ps?.addEventListener('input', () => {
+    const v = ps.value.trim().toLowerCase();
+    let n = 0;
+    document.querySelectorAll<HTMLElement>('#p-rows tr').forEach((tr) => {
+      const hit = !v || (tr.dataset.q ?? '').includes(v);
+      tr.hidden = !hit;
+      if (hit) n++;
+    });
+    const pn = q('p-n');
+    if (pn) pn.textContent = String(n);
+    const pe = q('p-empty');
+    if (pe) pe.hidden = n > 0;
+  });
+</script>

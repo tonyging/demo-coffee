@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getData } from '../../lib/data';
+import { roastLabel } from '../../lib/format';
+import { beanDetailHtml, sig } from '../../lib/render';
+
+export async function getStaticPaths() {
+  const data = await getData();
+  return data.beans.map((bean) => ({ params: { slug: bean.slug }, props: { bean, data } }));
+}
+const { bean, data } = Astro.props;
+const html = beanDetailHtml(bean, data);
+---
+
+<Base title={bean.name} current="beans" description={`${bean.name}（${bean.origin}・${roastLabel(bean.roast)}）：${bean.tagline}`}>
+  <div data-live-detail="beans" data-slug={bean.slug} data-sig={sig(html)} set:html={html} />
+</Base>
