@@ -10,7 +10,7 @@ data/screenshots/
 dist-mock/
 
 # 內部工作檔（不公開）
-data/
-SPEC.md
-scripts/*
-!scripts/import-seed.mjs
+/data/
+/SPEC.md
+/scripts/*
+!/scripts/import-seed.mjs
