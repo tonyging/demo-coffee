@@ -13,3 +13,15 @@ export function esc(s: unknown): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+const CJK = '\u3400-\u9fff\uf900-\ufaff';
+const CJK_GAP = new RegExp(`([${CJK}])[ \u3000]+(?=[${CJK}])`, 'g');
+
+/**
+ * 顯示用品名：品名裡的半形空格只給豆袋換行用（bag.ts 的 splitName），
+ * 標題、麵包屑、卡片、分享圖都用這個版本——只刪「兩個中文字之間」的空格，英數旁邊的空格保留。
+ * 例：「岸邊 配方」→「岸邊配方」；「肯亞 AA 水洗」維持原樣。
+ */
+export function displayName(name: unknown): string {
+  return String(name ?? '').trim().replace(CJK_GAP, '$1');
+}

@@ -1,4 +1,4 @@
-import { esc, roastLabel } from './text';
+import { displayName, esc, roastLabel } from './text';
 
 /** 相對亮度（WCAG），用來決定袋身上的字要用淺色還是深色 */
 export function luminance(hex: string): number {
@@ -77,7 +77,7 @@ export function renderBag(b: BagInput, idPrefix = 'bag'): string {
   const id = esc(idPrefix);
   const meta = [b.region && b.region !== '綜合' ? b.region : '', b.process].filter(Boolean).join(' · ');
 
-  return `<svg class="bag" viewBox="0 0 240 320" role="img" aria-label="${esc(b.name)} 咖啡豆袋，${esc(b.origin)}，${roastLabel(level)}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg class="bag" viewBox="0 0 240 320" role="img" aria-label="${esc(displayName(b.name))} 咖啡豆袋，${esc(b.origin)}，${roastLabel(level)}" xmlns="http://www.w3.org/2000/svg">
 <defs>
 <linearGradient id="${id}-sh" x1="0" x2="1" y1="0" y2="0">
 <stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".22" stop-color="#fff" stop-opacity="0"/>

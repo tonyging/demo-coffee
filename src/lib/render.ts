@@ -1,21 +1,31 @@
 import { renderBag } from './bag';
 import { renderRadar, renderRoastScale } from './charts';
-import { esc, formatDate, formatPrice, roastLabel, url } from './format';
+import { displayName, esc, formatDate, formatPrice, roastLabel, url } from './format';
 import type { Bean, HoursRow, NewsItem, Series } from './types';
 
 /** 這些函式同時給 Astro（建置時）與瀏覽器（即時更新）使用，確保兩邊畫面一致。 */
+
+/** 跨頁轉場用的 view-transition-name：依 slug 產生合法、唯一的 CSS 識別字（非英數字元轉成 _十六進位） */
+export function vtName(slug: string): string {
+  return 'bag-' + String(slug).replace(/[^a-zA-Z0-9-]/g, (c) => `_${c.codePointAt(0)!.toString(16)}`);
+}
+
+/** 風味標籤連到豆子列表的風味篩選 */
+export function flavorHref(note: string): string {
+  return `${url('beans/')}?flavor=${encodeURIComponent(note)}`;
+}
 
 export function beanCard(b: Bean, s: Series | undefined, idPrefix = 'c'): string {
   const bag = renderBag(
     { ...b, seriesLabel: s?.nameEn },
     `${idPrefix}-${b.slug}`
   );
-  return `<article class="bean-card" data-series="${esc(b.series)}" data-roast="${b.roast}" style="--bag:${esc(b.bagColor)}">
+  return `<article class="bean-card" data-series="${esc(b.series)}" data-roast="${b.roast}" data-notes="${esc(b.notes.join('|'))}" style="--bag:${esc(b.bagColor)};--vt:${vtName(b.slug)}">
 <a class="bean-card__link" href="${url(`beans/${b.slug}/`)}">
-<div class="bean-card__stage${b.image ? ' has-photo' : ''}">${b.image ? `<img class="photo" src="${esc(b.image.url)}" alt="${esc(b.image.alt || b.name)}" loading="lazy" decoding="async" />` : bag}</div>
+<div class="bean-card__stage${b.image ? ' has-photo' : ''}">${b.image ? `<img class="photo" src="${esc(b.image.url)}" alt="${esc(b.image.alt || displayName(b.name))}" loading="lazy" decoding="async" />` : bag}</div>
 <div class="bean-card__body">
 <p class="eyebrow"><span class="bc-series">${esc(s?.nameEn ?? '')}<span aria-hidden="true"> · </span></span><span class="nw">${roastLabel(b.roast)}</span></p>
-<h3 class="bean-card__name">${esc(b.name)}</h3>
+<h3 class="bean-card__name">${esc(displayName(b.name))}</h3>
 <p class="bean-card__notes">${b.notes.map((n) => `<span class="nw">${esc(n)}</span>`).join(' ')}</p>
 <p class="bean-card__price"><span class="num">${formatPrice(b.price)}</span><span class="unit"> / ${b.weight} g</span></p>
 </div>
@@ -95,20 +105,23 @@ export function beanDetailHtml(bean: Bean, data: SiteData): string {
 <a href="${url('')}">首頁</a><span aria-hidden="true">/</span>
 <a href="${url('beans/')}">咖啡豆</a><span aria-hidden="true">/</span>
 <a href="${url(`beans/#series-${bean.series}`)}">${esc(series?.name)}</a><span aria-hidden="true">/</span>
-<span aria-current="page">${esc(bean.name)}</span>
+<span aria-current="page">${esc(displayName(bean.name))}</span>
 </nav>
-<div class="detail" style="--bag:${esc(bean.bagColor)}">
-<div class="detail__stage${bean.image ? ' has-photo' : ''}">${bean.image ? `<img class="photo" src="${esc(bean.image.url)}" alt="${esc(bean.image.alt || bean.name)}" decoding="async" />` : bag}</div>
+<div class="detail" style="--bag:${esc(bean.bagColor)};--vt:${vtName(bean.slug)}">
+<div class="detail__stage${bean.image ? ' has-photo' : ''}">${bean.image ? `<img class="photo" src="${esc(bean.image.url)}" alt="${esc(bean.image.alt || displayName(bean.name))}" decoding="async" />` : bag}</div>
 <div class="detail__info">
 <p class="eyebrow">${esc(series?.nameEn)} · ${esc(series?.name)}</p>
-<h1>${esc(bean.name)}</h1>
+<h1>${esc(displayName(bean.name))}</h1>
 <p class="detail__en">${esc(bean.nameEn)}</p>
 <p class="detail__tagline">${esc(bean.tagline)}</p>
 <div class="detail__buy">
 <p class="detail__price"><span class="num">${formatPrice(bean.price)}</span> <small>/ ${bean.weight} g</small></p>
 <a class="btn" href="${url('contact/')}">洽詢與門市取貨 <span class="arr" aria-hidden="true">→</span></a>
 </div>
-<ul class="notes-list" aria-label="風味">${bean.notes.map((n) => `<li>${esc(n)}</li>`).join('')}</ul>
+${bean.notes.length ? `<div class="notes">
+<p class="notes__hint" id="notes-hint">風味<span aria-hidden="true">・</span>點一下，找同樣風味的豆子</p>
+<ul class="notes-list" aria-labelledby="notes-hint">${bean.notes.map((n) => `<li><a class="note-link" href="${esc(flavorHref(n))}" aria-label="看所有帶「${esc(n)}」風味的豆子">${esc(n)}<span class="note-link__arr" aria-hidden="true">→</span></a></li>`).join('')}</ul>
+</div>` : ''}
 <div class="charts reveal">
 <div><h2>風味評分</h2><div>${radar}</div></div>
 <div><h2>烘焙刻度</h2><div>${scale}</div></div>

@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import { url } from '../lib/format';
 ---
 
-<Base title="找不到頁面">
+<Base title="找不到頁面" notFound>
   <div id="nf-loading" role="status" aria-live="polite">
     <div class="page-head" style="border-bottom: 0; min-height: 50vh">
       <div class="wrap">
@@ -44,7 +44,7 @@ import { url } from '../lib/format';
    * 這裡就從 Sanity CDN 抓該項目，用與靜態頁相同的版型渲染；抓不到才維持 404。
    */
   import seed from '../data/seed.json';
-  import { normalize } from '../lib/format';
+  import { displayName, normalize } from '../lib/format';
   import { GROQ_ALL, SANITY_API_VERSION } from '../lib/queries';
   import { beanDetailHtml, newsDetailHtml } from '../lib/render';
   import type { SiteData } from '../lib/types';
@@ -84,7 +84,7 @@ import { url } from '../lib/format';
       const bean = data.beans.find((b) => b.slug === slug);
       if (!bean) return;
       html = beanDetailHtml(bean, data);
-      title = bean.name;
+      title = displayName(bean.name);
     } else {
       const i = data.news.findIndex((n) => n.slug === slug);
       if (i < 0) return;

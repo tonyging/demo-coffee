@@ -1,5 +1,6 @@
 ---
 import { renderBag } from '../lib/bag';
+import { roastLabel } from '../lib/text';
 import type { Bean } from '../lib/types';
 
 interface Props {
@@ -34,11 +35,26 @@ const labs = [
   { t: '深', deg: 443 },
 ].map((l) => ({ ...l, p: pol(156, l.deg) }));
 const bag = bean ? renderBag({ ...bean, seriesLabel }, 'hero') : '';
+// 指針指向主打豆的烘焙度：第 n 段色弧的中心（247° 起，每段 56°），換算成相對正上方的旋轉角
+const level = Math.min(5, Math.max(1, Math.round(bean?.roast ?? 3)));
+const needle = 247 + 56 * (level - 1) - 360;
 ---
+
+<script is:inline>
+  /* 首屏開場：只在這個分頁第一次看到首頁、而且沒開「減少動態」時播放（樣式在 global.css 的 .intro） */
+  (function () {
+    try {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (sessionStorage.getItem('lanan-intro')) return;
+      sessionStorage.setItem('lanan-intro', '1');
+      document.documentElement.classList.add('intro');
+    } catch (e) {}
+  })();
+</script>
 
 <div class="hero-art-wrap">
 <div class="hero-art" aria-hidden="false">
-  <svg class="dial" viewBox="0 0 520 520" role="img" aria-label="烘焙刻度盤插畫：一顆緩慢旋轉的咖啡豆，外圈是從淺焙到深焙的刻度" xmlns="http://www.w3.org/2000/svg">
+  <svg class="dial" viewBox="0 0 520 520" role="img" aria-label={`烘焙刻度盤插畫：外圈是從淺焙到深焙的刻度，指針停在本季主打豆的${roastLabel(level)}`} xmlns="http://www.w3.org/2000/svg">
     <defs>
       <path id="dial-path" d="M260 260m-206 0a206 206 0 1 1 412 0a206 206 0 1 1-412 0" />
     </defs>
@@ -49,10 +65,10 @@ const bag = bean ? renderBag({ ...bean, seriesLabel }, 'hero') : '';
       <text><textPath href="#dial-path" textLength="1280" lengthAdjust="spacing">LAN’AN ROASTERY · SMALL BATCH · DADAOCHENG TAIPEI · ROASTED WEEKLY ·</textPath></text>
     </g>
     <circle class="dial__ring" cx="260" cy="260" r="190" />
-    {segs.map((s) => <path d={s.d} fill="none" stroke={s.color} stroke-width="7" stroke-linecap="round" />)}
+    {segs.map((s, i) => <path class="dial__seg" d={s.d} pathLength="1" style={`--i:${i}`} fill="none" stroke={s.color} stroke-width="7" stroke-linecap="round" />)}
     <circle class="dial__disc" cx="260" cy="260" r="138" />
     {labs.map((l) => <text x={l.p[0].toFixed(1)} y={(l.p[1] + 8).toFixed(1)} text-anchor="middle" class="dial__lab">{l.t}</text>)}
-    <g class="dial__needle-g"><path class="dial__needle" d="M260 62l-7-14h14z" /></g>
+    <g class="dial__needle-g" style={`--needle:${needle}deg`}><path class="dial__needle" d="M260 62l-7-14h14z" /></g>
     <g class="dial__beanwrap">
       <g transform="translate(260 260) rotate(28)">
         <ellipse class="dial__bean" rx="62" ry="90" />

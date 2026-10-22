@@ -2,19 +2,24 @@
 import '../styles/global.css';
 import { getData, SANITY_PROJECT_ID, SANITY_DATASET } from '../lib/data';
 import { url } from '../lib/format';
+import { BRAND_ALT } from '../lib/og';
 
 interface Props {
   title?: string;
   description?: string;
   current?: 'home' | 'about' | 'beans' | 'news' | 'contact' | 'backend';
-  noindexHint?: boolean;
+  /** 分享圖（站內路徑，例如 og/beans/kenya-aa.png）；沒給就用品牌卡 og.png */
+  ogImage?: string;
+  ogImageAlt?: string;
+  /** 404：不輸出 canonical 與 og:url（這一頁沒有固定網址） */
+  notFound?: boolean;
 }
-const { title, description = '嵐岸咖啡 Lan’an Roastery：大稻埕的小型自家烘焙，單品豆、配方豆與濾掛。（作品範例網站，品牌與內容皆為虛構）', current } = Astro.props;
+const { title, description = '嵐岸咖啡 Lan’an Roastery：大稻埕的小型自家烘焙，單品豆、配方豆與濾掛。（作品範例網站，品牌與內容皆為虛構）', current, ogImage: ogPath = 'og.png', ogImageAlt = BRAND_ALT, notFound = false } = Astro.props;
 const data = await getData();
 const fullTitle = title ? `${title}｜嵐岸咖啡（作品範例）` : '嵐岸咖啡（作品範例）｜山的味道，在岸邊慢慢烘開';
 const ogDesc = description.includes('作品範例') ? description : `作品範例｜${description}`;
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
-const ogImage = new URL(`${import.meta.env.BASE_URL}og.jpg`, Astro.site).href;
+const ogImage = new URL(`${import.meta.env.BASE_URL}${ogPath}`, Astro.site).href;
 
 const nav = [
   { key: 'home', label: '首頁', href: url('') },
@@ -31,6 +36,9 @@ const live = SANITY_PROJECT_ID ? { id: SANITY_PROJECT_ID, ds: SANITY_DATASET } :
 <html lang="zh-Hant-TW">
   <head>
     <meta charset="utf-8" />
+    <!-- 跨頁轉場的開關要寫在 head 最前面的行內樣式：放在外部 CSS 時，頁面若在樣式表套用前先算過一次樣式，
+         Chrome 會判定新頁「沒有開啟」而放棄轉場（快取命中、換頁很快時常發生）。減少動態時不啟用。 -->
+    <style is:inline>@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }</style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
@@ -41,16 +49,18 @@ const live = SANITY_PROJECT_ID ? { id: SANITY_PROJECT_ID, ds: SANITY_DATASET } :
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:site_name" content="嵐岸咖啡（作品範例）" />
-    <meta property="og:url" content={pageUrl} />
+    {!notFound && <meta property="og:url" content={pageUrl} />}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="嵐岸咖啡示範網站首頁：諾豪資訊製作的示範作品" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={ogDesc} />
     <meta name="twitter:image" content={ogImage} />
-    <link rel="canonical" href={pageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    {!notFound && <link rel="canonical" href={pageUrl} />}
     <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -74,6 +84,16 @@ const live = SANITY_PROJECT_ID ? { id: SANITY_PROJECT_ID, ds: SANITY_DATASET } :
           document.documentElement.dataset.theme = t;
         } catch (e) {}
         document.documentElement.classList.add('js');
+        /* 跨頁轉場被瀏覽器略過（例如新頁是 404、使用者連點）時，轉場的 promise 會 reject；接住它，不在主控台留下錯誤 */
+        var quiet = function (e) {
+          var v = e.viewTransition;
+          if (!v) return;
+          [v.ready, v.finished, v.updateCallbackDone].forEach(function (p) {
+            if (p && p.catch) p.catch(function () {});
+          });
+        };
+        addEventListener('pageswap', quiet);
+        addEventListener('pagereveal', quiet);
       })();
     </script>
     {live && <meta name="sanity-live" content={`${live.id}|${live.ds}`} />}
@@ -120,11 +140,11 @@ const live = SANITY_PROJECT_ID ? { id: SANITY_PROJECT_ID, ds: SANITY_DATASET } :
       <div class="wrap">
         <section class="footer-cta" aria-labelledby="footer-cta-t">
           <div>
-            <h2 id="footer-cta-t">這個網站是誰做的？想要類似的網站？</h2>
-            <p>網站與後台由諾豪資訊製作。嵐岸咖啡是虛構的品牌，用來示範：網站長什麼樣子、店家自己怎麼改內容。想為自己的店做一個，歡迎直接聊聊。</p>
+            <h2 id="footer-cta-t">想要一個像這樣的網站？</h2>
+            <p>嵐岸咖啡是虛構的品牌，用來示範：網站長什麼樣子、店家自己怎麼改內容。想為自己的店做一個，歡迎直接聊聊。</p>
           </div>
           <div class="footer-cta__btns">
-            <a class="btn" href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">諾豪資訊官網 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn" href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">看服務內容 <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn btn--ghost" href="https://line.me/R/ti/p/@879gqgah" target="_blank" rel="noopener">LINE 詢問 <span class="arr" aria-hidden="true">→</span></a>
           </div>
         </section>
@@ -145,13 +165,12 @@ const live = SANITY_PROJECT_ID ? { id: SANITY_PROJECT_ID, ds: SANITY_DATASET } :
           <div class="footer-col">
             <h2>作品範例</h2>
             <a href={url('backend-demo/')}>後台怎麼用</a>
-            <a href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">諾豪資訊</a>
-            <p>網站與後台由諾豪資訊製作。</p>
+            <a href="https://tonyging.github.io/knowhow/#portfolio" target="_blank" rel="noopener">看更多作品<span aria-hidden="true">&nbsp;→</span></a>
           </div>
         </div>
         <div class="footer-base">
-          <span>© 嵐岸咖啡（虛構品牌）。作品範例，非真實店家。</span>
-          <a class="footer-made" href="https://tonyging.github.io/knowhow/#portfolio" target="_blank" rel="noopener">諾豪資訊 Knowhow 製作的示範作品・看更多作品 →</a>
+          <p class="footer-base__copy"><span class="nw">© 嵐岸咖啡（虛構品牌）。</span><span class="nw">作品範例，非真實店家。</span></p>
+          <a class="footer-made" href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener"><span class="nw">網站製作：諾豪資訊 Knowhow<span class="footer-made__arr" aria-hidden="true">&nbsp;→</span></span></a>
         </div>
       </div>
     </footer>

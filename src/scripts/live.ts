@@ -5,7 +5,7 @@
  * 門市資訊（地址、電話、Email、營業時間與營業狀態）也一併更新：標記為 data-store / data-store-hours / data-store-map 的位置。
  */
 import seed from '../data/seed.json';
-import { normalize } from '../lib/format';
+import { displayName, normalize } from '../lib/format';
 import { GROQ_ALL, SANITY_API_VERSION } from '../lib/queries';
 import { beanDetailHtml, beanSectionsHtml, featuredHtml, hoursRowsHtml, mapSrcFor, news3Html, newsDetailHtml, newsListHtml, removedHtml, sig } from '../lib/render';
 import type { SiteData } from '../lib/types';
@@ -71,7 +71,7 @@ function applyDetail(el: HTMLElement, raw: any, data: SiteData): boolean {
     const bean = data.beans.find((b) => b.slug === slug);
     if (bean) {
       html = beanDetailHtml(bean, data);
-      title = bean.name;
+      title = displayName(bean.name);
     }
   } else {
     if (!raw.news?.length) return false;

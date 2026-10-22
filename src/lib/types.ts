@@ -55,7 +55,7 @@ export interface Bean {
   image?: Photo;
 }
 
-export type NewsCategory = '最新消息' | '咖啡知識';
+export type NewsCategory = '店內消息' | '咖啡知識';
 
 export interface NewsItem {
   id: string;

@@ -9,7 +9,7 @@ const html = beanSectionsHtml(data);
 const roasts = ROAST_LABELS.map((l, i) => ({ v: String(i + 1), l }));
 ---
 
-<Base title="咖啡豆" current="beans" description="嵐岸咖啡的單品豆、配方豆、濾掛與限量批次，可依系列與烘焙度篩選。">
+<Base title="咖啡豆" current="beans" description="嵐岸咖啡的單品豆、配方豆、濾掛與限量批次，可依系列、烘焙度與風味篩選。">
   <div class="page-head">
     <div class="wrap">
       <p class="eyebrow mono">The Beans</p>
@@ -35,13 +35,18 @@ const roasts = ROAST_LABELS.map((l, i) => ({ v: String(i + 1), l }));
         {roasts.map((r) => <button class="chip" type="button" data-group="roast" data-value={r.v} aria-pressed="false">{r.l}</button>)}
       </div>
       <p class="filter-count mono" data-count aria-live="polite">顯示 {data.beans.length} 款</p>
+      <div class="filter-group filter-flavor" data-flavor hidden>
+        <button class="chip chip--flavor" type="button" data-flavor-clear>
+          <span>風味：<b data-flavor-label></b></span><span class="chip__x" aria-hidden="true">✕</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="wrap" style="padding-bottom: clamp(72px, 10vw, 140px)">
     <div data-live="beans" data-sig={sig(html)} set:html={html} />
     <div class="empty" data-empty hidden>
-      <p style="font-family: var(--serif); font-size: 1.4rem; margin-bottom: 16px">這個組合目前沒有豆子。</p>
+      <p style="font-family: var(--serif); font-size: 1.4rem; margin-bottom: 16px" data-empty-msg>這個組合目前沒有豆子。</p>
       <button class="btn btn--ghost" type="button" id="reset-filters">清除篩選</button>
     </div>
   </div>

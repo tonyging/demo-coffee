@@ -803,8 +803,10 @@ button {
   transform-origin: 260px 260px;
   animation: spin 120s linear infinite;
 }
+/* 指針停在主打豆的烘焙度（--needle 由 HeroArt 依資料算出），之後只在附近輕輕擺動 */
 .dial__needle-g {
   transform-origin: 260px 260px;
+  transform: rotate(var(--needle, 0deg));
   animation: breathe 14s ease-in-out infinite;
 }
 @keyframes spin {
@@ -815,10 +817,13 @@ button {
 @keyframes breathe {
   0%,
   100% {
-    transform: rotate(-52deg);
+    transform: rotate(var(--needle, 0deg));
   }
-  50% {
-    transform: rotate(48deg);
+  25% {
+    transform: rotate(calc(var(--needle, 0deg) + 4deg));
+  }
+  75% {
+    transform: rotate(calc(var(--needle, 0deg) - 4deg));
   }
 }
 .hero-art__bag {
@@ -1383,12 +1388,77 @@ button {
   gap: 10px;
   margin-bottom: 36px;
 }
-.notes-list li {
+.notes__hint {
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+/* 風味標籤：連到「同風味」篩選。框線＋箭頭讓它讀起來是可以按的，hover／焦點時轉成強調色 */
+.note-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px 0 18px;
   font-family: var(--serif);
   font-size: 1.15rem;
-  padding: 6px 18px;
-  border: 1px solid var(--rule);
+  line-height: 1.2;
+  border: 1px solid var(--field-border);
   border-radius: 999px;
+  color: var(--ink);
+  transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.note-link__arr {
+  font-family: var(--sans);
+  font-size: 0.85em;
+  color: var(--ink-2);
+  transition: transform 0.3s var(--ease), color 0.3s var(--ease);
+}
+.note-link:hover,
+.note-link:focus-visible {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.note-link:hover .note-link__arr,
+.note-link:focus-visible .note-link__arr {
+  color: var(--accent-ink);
+  transform: translateX(3px);
+}
+.filter-flavor {
+  grid-column: 1 / -1;
+}
+.filter-flavor[hidden] {
+  display: none;
+}
+.chip--flavor {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 0 16px;
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.chip--flavor b {
+  font-weight: 700;
+}
+.chip__x {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+.chip--flavor:hover {
+  border-color: var(--accent-ink);
+}
+.chip--flavor:hover .chip__x,
+.chip--flavor:focus-visible .chip__x {
+  background: var(--accent);
+  color: var(--btn-ink);
 }
 .charts {
   display: grid;
@@ -2534,9 +2604,34 @@ button {
   color: var(--ink-2);
   font-size: 0.9375rem;
 }
-.footer-base a {
-  border-bottom: 1px solid var(--rule);
-  padding-block: 2px;
+.footer-base__copy {
+  margin: 0;
+  align-self: center;
+}
+/* 頁尾底線列：全站唯一一處「誰做的」署名（另一處是頂部提示條） */
+.footer-made {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: color 0.3s var(--ease), text-decoration-color 0.3s var(--ease);
+}
+.footer-made__arr {
+  display: inline-block;
+  transition: transform 0.3s var(--ease);
+}
+.footer-made:hover,
+.footer-made:focus-visible {
+  color: var(--accent-ink);
+  text-decoration-color: currentColor;
+}
+.footer-made:hover .footer-made__arr,
+.footer-made:focus-visible .footer-made__arr {
+  transform: translateX(3px);
 }
 
 /* ───────── Motion ───────── */
@@ -2868,4 +2963,83 @@ button {
   font-size: 1.1rem;
   line-height: 1;
   border-radius: 4px;
+}
+
+/* ───────── 首屏開場（只播一次、1.2 秒內結束） ─────────
+   html.intro 只在「沒開減少動態、這個分頁第一次看到首頁」時由 HeroArt 的行內腳本加上。
+   預設樣式就是完成狀態，所以沒有 JS、減少動態或第二次進來時都直接看到結果。
+   只動 transform／opacity／stroke-dashoffset，不影響版面（CLS 0），主標 h1 不參與（不延後 LCP）。 */
+.intro .dial__ticks {
+  animation: intro-fade 0.5s var(--ease) both, spin 280s linear infinite;
+}
+.intro .dial__seg {
+  stroke-dasharray: 1 1;
+  animation: seg-draw 0.34s var(--ease) calc(var(--i) * 0.1s) both;
+}
+.intro .dial__needle-g {
+  animation: needle-in 0.9s cubic-bezier(0.3, 1.25, 0.5, 1) 0.15s both, breathe 14s ease-in-out 1.2s infinite;
+}
+.intro .hero-art__bag {
+  animation: bag-drop 0.5s cubic-bezier(0.3, 1.35, 0.5, 1) 0.7s both, bob 7s ease-in-out 1.2s infinite;
+}
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes seg-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes needle-in {
+  from {
+    transform: rotate(-113deg);
+  }
+  to {
+    transform: rotate(var(--needle, 0deg));
+  }
+}
+@keyframes bag-drop {
+  from {
+    opacity: 0;
+    transform: rotate(5deg) translateY(-56px);
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(5deg) translateY(0);
+  }
+}
+
+/* ───────── 跨頁轉場（View Transitions） ─────────
+   列表卡片的豆袋飛到詳細頁的豆袋位置：兩邊用同一個 view-transition-name（bag-<slug>，由 render.ts 的 vtName 產生）。
+   開關 @view-transition 寫在 Base.astro 的 head 行內樣式（原因見該處註解）；這裡只放命名與時間。
+   不支援的瀏覽器會忽略這段，照常換頁；減少動態時整段不啟用。 */
+@media (prefers-reduced-motion: no-preference) {
+  .bean-card__stage > .bag,
+  .bean-card__stage > .photo,
+  .detail__stage > .bag,
+  .detail__stage > .photo {
+    view-transition-name: var(--vt, none);
+  }
+  .site-header {
+    view-transition-name: site-header;
+  }
+  ::view-transition-group(*) {
+    animation-duration: 0.55s;
+    animation-timing-function: cubic-bezier(0.22, 0.8, 0.2, 1);
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.3s;
+  }
 }

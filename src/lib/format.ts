@@ -1,7 +1,7 @@
 import type { Bean, HoursRow, NewsItem, Photo, Series, SiteData, Store } from './types';
 
-import { ROAST_LABELS, esc, roastLabel } from './text';
-export { ROAST_LABELS, esc, roastLabel };
+import { ROAST_LABELS, displayName, esc, roastLabel } from './text';
+export { ROAST_LABELS, displayName, esc, roastLabel };
 
 export function formatPrice(n: number): string {
   return 'NT$ ' + Number(n).toLocaleString('en-US');
@@ -95,7 +95,7 @@ export function normalize(raw: any, fallback: SiteData): SiteData {
       id: n.id ?? n._id ?? n.slug,
       slug: n.slug,
       title: n.title ?? '',
-      category: n.category === '咖啡知識' ? '咖啡知識' : '最新消息',
+      category: n.category === '咖啡知識' ? '咖啡知識' : '店內消息', // 舊資料的「最新消息」一律視為「店內消息」
       date: String(n.date ?? '').slice(0, 10),
       excerpt: n.excerpt ?? '',
       body: paragraphs(n.body),

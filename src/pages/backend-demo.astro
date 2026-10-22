@@ -20,7 +20,7 @@ const colors = [
 const demo = { name: '安提瓜 火山', origin: '瓜地馬拉', region: '', process: '', roast: 3, weight: 200, bagColor: '#5E6B4A', seriesLabel: 'Single Origin' };
 const bag = renderBag(demo, 'demo');
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date());
-const newsPreview = newsRow({ id: 'x', slug: 'x', title: '本週新到貨：安提瓜火山', category: '最新消息', date: today, excerpt: '', body: [] }, { link: false });
+const newsPreview = newsRow({ id: 'x', slug: 'x', title: '本週新到貨：安提瓜火山', category: '店內消息', date: today, excerpt: '', body: [] }, { link: false });
 const data = await getData();
 const seriesName = new Map(data.series.map((x) => [x.id, x.name]));
 const listRows = data.beans.slice(0, 8).map((b) => ({ name: b.name, series: seriesName.get(b.series) ?? '', price: formatPrice(b.price), thumb: renderBag({ ...b, seriesLabel: '' }, `lt-${b.slug}`) }));
@@ -199,7 +199,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
                 </div>
                 <div class="mock-field">
                   <label for="n-cat">分類</label>
-                  <select id="n-cat"><option>最新消息</option><option>咖啡知識</option></select>
+                  <select id="n-cat"><option>店內消息</option><option>咖啡知識</option></select>
                 </div>
                 <div class="mock-field">
                   <label for="n-body">內文</label>
@@ -418,7 +418,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
     if (!nt || !nc || !np) return;
     np.innerHTML =
       '<ul class="news-list" style="border-top:0">' +
-      newsRow({ id: 'x', slug: 'x', title: nt.value || '（尚未輸入標題）', category: nc.value === '咖啡知識' ? '咖啡知識' : '最新消息', date: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date()), excerpt: '', body: [] }, { link: false }) +
+      newsRow({ id: 'x', slug: 'x', title: nt.value || '（尚未輸入標題）', category: nc.value === '咖啡知識' ? '咖啡知識' : '店內消息', date: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Taipei' }).format(new Date()), excerpt: '', body: [] }, { link: false }) +
       '</ul>';
   }
   [nt, nc, q<HTMLTextAreaElement>('n-body')].forEach((el) => {

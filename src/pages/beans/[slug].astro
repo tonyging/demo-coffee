@@ -1,7 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getData } from '../../lib/data';
-import { roastLabel } from '../../lib/format';
+import { displayName, roastLabel } from '../../lib/format';
+import { beanOgAlt, beanPng } from '../../lib/og';
 import { beanDetailHtml, sig } from '../../lib/render';
 
 export async function getStaticPaths() {
@@ -10,8 +11,17 @@ export async function getStaticPaths() {
 }
 const { bean, data } = Astro.props;
 const html = beanDetailHtml(bean, data);
+const name = displayName(bean.name);
+// 這款豆子的專屬分享圖產得出來才指過去；否則（例如建置時抓不到字型）沿用品牌卡
+const hasOg = !!(await beanPng(bean, data));
 ---
 
-<Base title={bean.name} current="beans" description={`${bean.name}（${bean.origin}・${roastLabel(bean.roast)}）：${bean.tagline}`}>
+<Base
+  title={name}
+  current="beans"
+  description={`${name}（${bean.origin}・${roastLabel(bean.roast)}）：${bean.tagline}`}
+  ogImage={hasOg ? `og/beans/${encodeURIComponent(bean.slug)}.png` : undefined}
+  ogImageAlt={hasOg ? beanOgAlt(bean) : undefined}
+>
   <div data-live-detail="beans" data-slug={bean.slug} data-sig={sig(html)} set:html={html} />
 </Base>
