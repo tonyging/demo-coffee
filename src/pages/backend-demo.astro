@@ -33,24 +33,38 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
     <div class="wrap">
       <p class="eyebrow mono">How the backend works</p>
       <h1>後台怎麼用？<br />三個步驟就夠了。</h1>
-      <p class="lede">網站上的豆子、價格、圖片與消息，都由店家自己在後台修改，不必寫程式。產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。下面是示意畫面，其中的欄位可以直接試著輸入（示意中的「＋」只是標出位置，不能按）。</p>
+      <p class="lede m-hide">網站上的豆子、價格、圖片與消息，都由店家自己在後台修改，不必寫程式。產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。下面是示意畫面，其中的欄位可以直接試著輸入（示意中的「＋」只是標出位置，不能按）。</p>
+      <div class="m-only bd-quick">
+        <p class="lede"><strong>產品、消息、門市資訊，店家自己就能改</strong>，不必寫程式。</p>
+        <ul class="bd-chips" aria-label="店家自己改的內容"><li>產品（含照片）</li><li>最新消息</li><li>門市資訊</li></ul>
+        <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-head">哪些要找諾豪資訊？</button>
+        <div class="mfold" id="f-head">
+          <p>首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。</p>
+          <p>下面的示意畫面，欄位可以直接試著輸入（示意中的「＋」只是標出位置，不能按）。</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <section class="section">
+  <section class="section bd-sec">
     <div class="wrap steps">
       <!-- Step 1 -->
       <article class="step">
         <div class="step__text reveal">
           <p class="step__no num">1</p>
           <h2>登入後台</h2>
+          <p class="step__short m-only">用 Google、GitHub 或 Email 登入，只有受邀的人進得去。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-s1a f-s1b">看說明與登入畫面</button>
+          <div class="mfold" id="f-s1a">
           <p class="lede" style="font-size: 1.05rem">打開專屬的後台網址登入。登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。只有被邀請的人進得去。</p>
           <ol>
             <li>打開後台網址（上線後由諾豪資訊提供）</li>
             <li>選擇登入方式（受邀的 Email 要用同一種方式登入）</li>
             <li>進入內容管理畫面</li>
           </ol>
+          </div>
         </div>
+        <div class="mfold" id="f-s1b">
         <div class="win reveal" style="--d: 0.1s" role="img" aria-label="後台登入畫面示意">
           <div class="win__bar"><i></i><i></i><i></i><span class="win__url">https://你的店名.sanity.studio</span></div>
           <div class="win__body">
@@ -63,6 +77,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
             </div>
           </div>
         </div>
+        </div>
       </article>
 
       <!-- Step 2 -->
@@ -70,6 +85,9 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
         <div class="step__text reveal">
           <p class="step__no num">2</p>
           <h2>新增一款豆子</h2>
+          <p class="step__short m-only">填名稱、產地、價格，選袋子顏色，按發佈。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-s2a f-s2b">看說明・動手試試</button>
+          <div class="mfold" id="f-s2a">
           <p class="lede" style="font-size: 1.05rem">先選品牌系列，再按新增，填入名稱、產地、烘焙度與價格，選一個袋子的顏色，按發佈。</p>
           <ol>
             <li>左側打開「咖啡豆・依系列」，點一個品牌系列（真實後台會一欄一欄往右展開），按右上角的「＋」（所屬系列會自動帶入；從「全部豆子」新增的話，要自己選所屬系列）</li>
@@ -80,7 +98,9 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
           <p class="callout">試試看：改豆名、風味、價格或顏色，再切到「袋子預覽」，袋子會跟著變。你不用按儲存，後台會自動存成草稿；按「發佈」才會上網站。網站上每一個產品袋，就是這樣由資料自動畫出來的。</p>
           <p class="note">新增、修改、刪除都會在幾秒內反映在網站上（列表與詳細頁都是；刪除的項目會顯示「已下架」）。搜尋引擎收錄與分享預覽要等下次網站重新建置（可設定為發佈後自動建置）。</p>
           <p class="note">關於示意畫面：真實後台是「逐欄展開」，依序是「網站內容」→「咖啡豆・依系列」→「選擇品牌系列」→「這個系列的豆子」→ 編輯畫面。這裡的示意把四個系列直接縮排在側欄，方便一次看完；欄位與順序以真實後台為準。</p>
+          </div>
         </div>
+        <div class="mfold" id="f-s2b">
         <div class="win reveal" style="--d: 0.1s">
           <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/bean;新增咖啡豆</span></div>
           <div class="win__body">
@@ -161,6 +181,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
             </div>
           </div>
         </div>
+        </div>
       </article>
 
       <!-- Step 3 -->
@@ -168,6 +189,9 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
         <div class="step__text reveal">
           <p class="step__no num">3</p>
           <h2>發一則消息</h2>
+          <p class="step__short m-only">寫好標題與內文，按發佈，網站就看得到。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-s3a f-s3b">看說明・動手試試</button>
+          <div class="mfold" id="f-s3a">
           <p class="lede" style="font-size: 1.05rem">新品上架、活動預告、咖啡小知識，寫完按「發佈」。按下發佈後，重新整理網站就看得到。</p>
           <ol>
             <li>左側選「最新消息」，按「＋」</li>
@@ -177,7 +201,9 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
           </ol>
           <p class="note">新增、修改、刪除都會在幾秒內反映在網站上（列表與詳細頁都是；刪除的項目會顯示「已下架」）。搜尋引擎收錄與分享預覽要等下次網站重新建置（可設定為發佈後自動建置）。</p>
           <p class="callout">想先存起來、之後再發？不用按任何鈕，後台會自動存成草稿；草稿不會出現在網站上，準備好再按「發佈」。</p>
+          </div>
         </div>
+        <div class="mfold" id="f-s3b">
         <div class="win reveal" style="--d: 0.1s">
           <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/news;新增消息</span></div>
           <div class="win__body">
@@ -216,6 +242,7 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
             </div>
           </div>
         </div>
+        </div>
       </article>
 
       <!-- Products -->
@@ -223,13 +250,18 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
         <div class="step__text reveal">
           <p class="step__no num">＋</p>
           <h2>產品變多也管得動</h2>
+          <p class="step__short m-only">依系列瀏覽、用名稱搜尋，上百項產品也找得到。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-s4a f-s4b">看說明・試試搜尋</button>
+          <div class="mfold" id="f-s4a">
           <p class="lede" style="font-size: 1.05rem">品牌有十幾個、產品有幾十項也沒問題：依系列瀏覽、依名稱搜尋，每一項都能附上產品照片，後台可管理上百項產品。</p>
           <ol>
             <li>左側點一個品牌系列，只看那個系列的豆子；想看全部就點「全部豆子」</li>
             <li>在搜尋框輸入名稱，清單立刻篩選（清單會顯示豆名、系列與價格）</li>
             <li>點進任何一項，修改文字或更換照片</li>
           </ol>
+          </div>
         </div>
+        <div class="mfold" id="f-s4b">
         <div class="win reveal" style="--d: 0.1s">
           <div class="win__bar"><i></i><i></i><i></i><span class="win__url">…/structure/bean</span></div>
           <div class="win__body">
@@ -252,11 +284,12 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
             </div>
           </div>
         </div>
+        </div>
       </article>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="ops-t">
+  <section class="section bd-sec" aria-labelledby="ops-t">
     <div class="wrap">
       <div class="sec-head reveal">
         <div>
@@ -267,6 +300,9 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
       <div class="ops reveal">
         <div>
           <h3>後台費用</h3>
+          <p class="ops__key m-only">後台用 Sanity 免費方案，每月 0 美元。要細分權限、私有資料或更長的紀錄，才需升級（每位使用者每月 15 美元起）。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-o1">看免費方案的額度</button>
+          <div class="mfold" id="f-o1">
           <p>後台使用 Sanity。依其<a href="https://www.sanity.io/pricing" target="_blank" rel="noopener">官方方案頁</a>（2026 年 10 月 22 日查證），免費方案（Free，每月 0 美元）和本站相關的額度是：</p>
           <ul>
             <li>使用者（Seats）：Free 20 人、Growth 50 人</li>
@@ -278,18 +314,23 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
             <li>草稿的變更紀錄（Review Changes: Drafts）保留 3 天；Growth 方案 90 天。「完整歷史」（Complete history）免費與 Growth 方案都不含</li>
           </ul>
           <p style="margin-top: 10px">免費方案的資料集是公開的，任何人都能讀取；本站的內容（豆子、消息、門市資訊）本來就公開在網站上，所以沒有影響。需要私有資料集、更多文件或更長的紀錄時，才需要升級付費方案（依官方公告，Growth 方案每位使用者每月 15 美元起，實際以官方方案頁為準）。網域等其他費用，洽談時一併列清楚。</p>
+          </div>
         </div>
         <div>
           <h3>維運與改版</h3>
+          <p class="ops__key m-only">產品、消息、門市資訊（含圖片）自己改；版面與新功能找諾豪資訊。</p>
+          <button class="mfold__btn" type="button" aria-expanded="false" aria-controls="f-o2">看細節</button>
+          <div class="mfold" id="f-o2">
           <p>門市的地址、電話、營業時間在後台改完按發佈，重新整理後，首頁、聯絡頁與頁尾都會更新。</p>
           <p>產品、消息、門市資訊（含圖片）自己改；首頁與關於頁的文案、版面或新功能，再找諾豪資訊（也可依需求做成後台可編輯）。</p>
           <p>日常維運、網站改版與後台教學，也都可以委託<a href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">諾豪資訊</a>處理。</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section panel" aria-labelledby="trust-t">
+  <section class="section panel bd-sec" aria-labelledby="trust-t">
     <div class="wrap">
       <div class="sec-head reveal">
         <div>
@@ -297,11 +338,12 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
           <h2 class="sec-title" id="trust-t">放心自己管，草稿不會上網站。</h2>
         </div>
       </div>
+      <button class="mfold__btn mfold__btn--panel" type="button" aria-expanded="false" aria-controls="f-t1 f-t2 f-t3 f-t4">看每一點的說明</button>
       <ul class="trust">
-        <li class="reveal"><h3>只有受邀的人能登入</h3><p>登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。帳號由店家邀請與管理，可以隨時移除離職同仁的存取權。</p></li>
-        <li class="reveal" style="--d: 0.08s"><h3>草稿先存，按發佈才上線</h3><p>草稿紀錄在免費方案只保留 3 天（Growth 方案 90 天），已發佈內容的完整修改歷史免費與 Growth 都沒有，所以重要內容仍建議自己留底。後台會自動存草稿，按下「發佈」才會出現在網站上；咖啡豆的編輯頁另有袋子預覽，可以先看豆袋長什麼樣子。</p></li>
-        <li class="reveal" style="--d: 0.16s"><h3>前台只讀取公開內容</h3><p>網站本身是靜態頁面；內容存在 Sanity 雲端，前台只讀取公開內容。全站使用 HTTPS。</p></li>
-        <li class="reveal" style="--d: 0.24s"><h3>網站與帳號在店家名下</h3><p>本範例放在諾豪資訊的帳號下；正式案件的網域、主機、後台帳號都建在店家名下，不綁在諾豪資訊的帳號裡。</p></li>
+        <li class="reveal"><h3>只有受邀的人能登入</h3><p class="mfold" id="f-t1">登入方式可用 Google、GitHub 或 Email；建議用 Google 或 GitHub 帳號登入，並在該帳號開啟兩步驟驗證。帳號由店家邀請與管理，可以隨時移除離職同仁的存取權。</p></li>
+        <li class="reveal" style="--d: 0.08s"><h3>草稿先存，按發佈才上線</h3><p class="mfold" id="f-t2">草稿紀錄在免費方案只保留 3 天（Growth 方案 90 天），已發佈內容的完整修改歷史免費與 Growth 都沒有，所以重要內容仍建議自己留底。後台會自動存草稿，按下「發佈」才會出現在網站上；咖啡豆的編輯頁另有袋子預覽，可以先看豆袋長什麼樣子。</p></li>
+        <li class="reveal" style="--d: 0.16s"><h3>前台只讀取公開內容</h3><p class="mfold" id="f-t3">網站本身是靜態頁面；內容存在 Sanity 雲端，前台只讀取公開內容。全站使用 HTTPS。</p></li>
+        <li class="reveal" style="--d: 0.24s"><h3>網站與帳號在店家名下</h3><p class="mfold" id="f-t4">本範例放在諾豪資訊的帳號下；正式案件的網域、主機、後台帳號都建在店家名下，不綁在諾豪資訊的帳號裡。</p></li>
       </ul>
       <div class="store__cta" style="margin-top: 48px">
         <a class="btn" href="https://tonyging.github.io/knowhow/" target="_blank" rel="noopener">我也想要這樣的網站 <span class="arr" aria-hidden="true">→</span></a>
@@ -445,6 +487,15 @@ const roastOpts = ['淺焙', '淺中焙', '中焙', '中深焙', '深焙'];
         clearTimeout(timers[which]);
         timers[which] = window.setTimeout(() => (toast.textContent = ''), 5000);
       }
+    })
+  );
+
+  /* 手機版摺疊：一個按鈕可控制多個區塊（aria-controls 以空白分隔）；桌機的 CSS 不隱藏，按鈕也不顯示 */
+  document.querySelectorAll<HTMLButtonElement>('.mfold__btn').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', String(open));
+      (btn.getAttribute('aria-controls') ?? '').split(' ').forEach((id) => q(id)?.classList.toggle('is-open', open));
     })
   );
 
