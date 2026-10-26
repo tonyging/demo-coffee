@@ -2534,6 +2534,12 @@ button {
   .js .mfold__btn[aria-expanded='true']::after {
     transform: translateY(2px) rotate(-135deg);
   }
+  /* 整頁最主要的互動（步驟 2），按鈕用實心底色突顯 */
+  .js .mfold__btn--try {
+    color: var(--bg);
+    background: var(--accent-ink);
+    border-color: var(--accent-ink);
+  }
   .js .mfold:not(.is-open) {
     display: none;
   }
