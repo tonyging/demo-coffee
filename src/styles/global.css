@@ -2490,6 +2490,173 @@ button {
   color: var(--panel-ink-2);
 }
 
+/* 後台頁・手機版（< 760px）：重點一句先講，細節收進「看說明」；桌機與平板不受影響 */
+.m-only,
+.mfold__btn {
+  display: none;
+}
+@media (max-width: 759px) {
+  .m-only {
+    display: block;
+  }
+  .m-hide {
+    display: none;
+  }
+  .js .mfold__btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 14px;
+    padding: 10px 16px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: left;
+    color: var(--accent-ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .js .mfold__btn::after {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.3s var(--ease);
+  }
+  .js .mfold__btn[aria-expanded='true']::after {
+    transform: translateY(2px) rotate(-135deg);
+  }
+  /* 整頁最主要的互動（步驟 2），按鈕用實心底色突顯 */
+  .js .mfold__btn--try {
+    color: var(--bg);
+    background: var(--accent-ink);
+    border-color: var(--accent-ink);
+  }
+  .js .mfold:not(.is-open) {
+    display: none;
+  }
+  .mfold.is-open {
+    margin-top: 14px;
+  }
+
+  .bd-sec {
+    padding-block: 48px;
+  }
+  .bd-quick .lede {
+    color: var(--ink);
+  }
+  .bd-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .bd-chips li {
+    padding: 4px 12px;
+    border: 1px solid var(--accent-ink);
+    border-radius: 999px;
+    color: var(--accent-ink);
+    font-size: 0.9375rem;
+  }
+  .bd-quick .mfold p {
+    color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+
+  .steps {
+    gap: 28px;
+  }
+  .step {
+    gap: 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .step:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+  /* 左右滑的側欄不能把整個步驟撐寬 */
+  .step > * {
+    min-width: 0;
+  }
+  .step__text {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 14px;
+  }
+  .step__text > :not(.step__no):not(h2) {
+    grid-column: 1 / -1;
+  }
+  .step__no {
+    font-size: 2.6rem;
+    margin-bottom: 0;
+  }
+  .step h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+  }
+  .step__short {
+    margin-top: 10px;
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+  /* 示意側欄改成可左右滑的一列，不再直排佔一大段 */
+  .mock-side {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 12px 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .mock-side b {
+    margin: 0 4px 0 0;
+    align-self: center;
+  }
+  .mock-main {
+    padding: 18px;
+  }
+
+  .ops {
+    gap: 16px;
+  }
+  .ops > div {
+    padding: 18px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .ops .ops__key {
+    color: var(--ink);
+    margin-bottom: 0;
+  }
+
+  .js .mfold__btn--panel {
+    margin: 0 0 8px;
+    color: var(--panel-ink);
+    border-color: var(--panel-ink-2);
+  }
+  .trust li {
+    padding-block: 16px;
+  }
+  .trust h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0;
+  }
+  .trust .mfold.is-open {
+    margin-top: 8px;
+  }
+}
+
 /* ───────── Footer ───────── */
 .footer-cta {
   display: grid;
